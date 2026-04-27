@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  deployments: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    # Forked-PR runs cannot read secrets, so skip deploy in that case. Same-repo
+    # PRs and pushes to main go through.
+    if: >-
+      github.event_name == 'push' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist/ --project-name=griddy-web-portal --branch=${{ github.head_ref || github.ref_name }}
+
+      - name: Comment preview URL on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.deployment-url }}
+        with:
+          script: |
+            const url = process.env.PREVIEW_URL;
+            if (!url) {
+              core.setFailed("wrangler-action did not produce a deployment-url output");
+              return;
+            }
+            const marker = "<!-- griddy-web-portal-preview -->";
+            const sha = context.payload.pull_request.head.sha.slice(0, 7);
+            const body = `${marker}\n## Preview deployed\n\n${url}\n\nDeployed from \`${sha}\`.`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+            });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
