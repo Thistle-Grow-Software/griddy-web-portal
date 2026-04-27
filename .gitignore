@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.cache/
+.turbo/
+
+# Vite
+.vite/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+.playwright/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Generated API clients (regenerate from OpenAPI spec on demand)
+src/api/generated/
+
+# Sentry
+.sentryclirc
