@@ -1,0 +1,18 @@
+/* Minimal global styles. UI-kit setup (Mantine — see ADR-0004) lands
+   in a follow-up story; this file only resets the body and gives the
+   default scaffold something to render against. */
+:root {
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	line-height: 1.5;
+	color: #1a1a1a;
+	background-color: #ffffff;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+}
+
+main {
+	padding: 2rem;
+}
