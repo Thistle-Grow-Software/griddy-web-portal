@@ -6,7 +6,7 @@
   "description": "Griddy Web Viewing Portal — React + Vite web app for authenticated coaches, scouts, and media to browse stats and watch game film.",
   "license": "MIT",
   "engines": {
-    "node": ">=22.0.0",
+    "node": ">=24.0.0",
     "pnpm": ">=10.0.0"
   },
   "packageManager": "pnpm@10.33.2",

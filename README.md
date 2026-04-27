@@ -17,15 +17,12 @@ For the full v1 scope and explicit non-goals, see Jira **TGF-321** ("Griddy Web 
 
 ### Prerequisites
 
-- **Node.js 22.x** — pinned via `.nvmrc` / `.node-version`. Install via [nvm](https://github.com/nvm-sh/nvm), [fnm](https://github.com/Schniz/fnm), or [Volta](https://volta.sh/).
-- **pnpm 10.x** — easiest path is via [Corepack](https://nodejs.org/api/corepack.html), which ships with Node:
+- **Node.js 24.x** — pinned via `.nvmrc` / `.node-version`. Install via [pnpm](https://pnpm.io/cli/env#use)
+- **pnpm 10.x** — easiest path is via the [standalone script](https://pnpm.io/installation#using-a-standalone-script).
 
   ```bash
-  corepack enable
-  corepack prepare pnpm@latest --activate
+  curl -fsSL https://get.pnpm.io/install.sh | sh -
   ```
-
-  No global `pnpm` install required.
 
 ### Getting started
 
