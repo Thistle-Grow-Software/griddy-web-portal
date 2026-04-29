@@ -21,7 +21,7 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "check": "biome check .",
-    "fix": "biome check --fix --unsafe",
+    "fix": "biome check --fix --unsafe .",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
