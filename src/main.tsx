@@ -1,4 +1,5 @@
 import { App } from "@/App";
+import { ColorSchemeScript } from "@mantine/core";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@/index.css";
@@ -10,6 +11,7 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
 	<StrictMode>
+		<ColorSchemeScript defaultColorScheme={"auto"} />
 		<App />
 	</StrictMode>,
 );
