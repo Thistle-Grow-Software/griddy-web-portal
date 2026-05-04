@@ -4,7 +4,7 @@ import "@mantine/dates/styles.css";
 
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 
-import { AppShell, Burger, Group, MantineProvider, Title } from "@mantine/core";
+import { AppShell, Burger, Group, MantineProvider, NavLink, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
@@ -46,7 +46,14 @@ function RootComponent() {
 						</Group>
 					</AppShell.Header>
 
-					<AppShell.Navbar p="md">Navbar</AppShell.Navbar>
+					<AppShell.Navbar p="md">
+						<NavLink href="/" label="Home" />
+						<NavLink href="/theme-preview" label="Theme Preview" />
+						<NavLink href="/players" label="Players" />
+						<NavLink href="/games" label="Games" />
+						<NavLink href="/stats" label="Stats" />
+						<NavLink href="/settings" label="Settings" />
+					</AppShell.Navbar>
 
 					<AppShell.Main>
 						<Outlet />
