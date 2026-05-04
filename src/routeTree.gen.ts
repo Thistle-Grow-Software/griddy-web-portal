@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from "./routes/__root"
 import { Route as ThemePreviewRouteImport } from "./routes/theme-preview"
 import { Route as TeamsRouteImport } from "./routes/teams"
 import { Route as StatsRouteImport } from "./routes/stats"
+import { Route as SettingsRouteImport } from "./routes/settings"
 import { Route as PlayersRouteImport } from "./routes/players"
 import { Route as GamesRouteImport } from "./routes/games"
 import { Route as IndexRouteImport } from "./routes/index"
@@ -19,6 +20,8 @@ import { Route as TeamsIndexRouteImport } from "./routes/teams.index"
 import { Route as PlayersIndexRouteImport } from "./routes/players.index"
 import { Route as GamesIndexRouteImport } from "./routes/games.index"
 import { Route as TeamsTeamIdRouteImport } from "./routes/teams.$teamId"
+import { Route as SignUpSplatRouteImport } from "./routes/sign-up.$"
+import { Route as SignInSplatRouteImport } from "./routes/sign-in.$"
 import { Route as PlayersPlayerIdRouteImport } from "./routes/players.$playerId"
 import { Route as GamesGameIdRouteImport } from "./routes/games.$gameId"
 
@@ -35,6 +38,11 @@ const TeamsRoute = TeamsRouteImport.update({
 const StatsRoute = StatsRouteImport.update({
   id: "/stats",
   path: "/stats",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: "/settings",
+  path: "/settings",
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlayersRoute = PlayersRouteImport.update({
@@ -72,6 +80,16 @@ const TeamsTeamIdRoute = TeamsTeamIdRouteImport.update({
   path: "/$teamId",
   getParentRoute: () => TeamsRoute,
 } as any)
+const SignUpSplatRoute = SignUpSplatRouteImport.update({
+  id: "/sign-up/$",
+  path: "/sign-up/$",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInSplatRoute = SignInSplatRouteImport.update({
+  id: "/sign-in/$",
+  path: "/sign-in/$",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlayersPlayerIdRoute = PlayersPlayerIdRouteImport.update({
   id: "/$playerId",
   path: "/$playerId",
@@ -87,11 +105,14 @@ export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/games": typeof GamesRouteWithChildren
   "/players": typeof PlayersRouteWithChildren
+  "/settings": typeof SettingsRoute
   "/stats": typeof StatsRoute
   "/teams": typeof TeamsRouteWithChildren
   "/theme-preview": typeof ThemePreviewRoute
   "/games/$gameId": typeof GamesGameIdRoute
   "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/sign-in/$": typeof SignInSplatRoute
+  "/sign-up/$": typeof SignUpSplatRoute
   "/teams/$teamId": typeof TeamsTeamIdRoute
   "/games/": typeof GamesIndexRoute
   "/players/": typeof PlayersIndexRoute
@@ -99,10 +120,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
+  "/settings": typeof SettingsRoute
   "/stats": typeof StatsRoute
   "/theme-preview": typeof ThemePreviewRoute
   "/games/$gameId": typeof GamesGameIdRoute
   "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/sign-in/$": typeof SignInSplatRoute
+  "/sign-up/$": typeof SignUpSplatRoute
   "/teams/$teamId": typeof TeamsTeamIdRoute
   "/games": typeof GamesIndexRoute
   "/players": typeof PlayersIndexRoute
@@ -113,11 +137,14 @@ export interface FileRoutesById {
   "/": typeof IndexRoute
   "/games": typeof GamesRouteWithChildren
   "/players": typeof PlayersRouteWithChildren
+  "/settings": typeof SettingsRoute
   "/stats": typeof StatsRoute
   "/teams": typeof TeamsRouteWithChildren
   "/theme-preview": typeof ThemePreviewRoute
   "/games/$gameId": typeof GamesGameIdRoute
   "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/sign-in/$": typeof SignInSplatRoute
+  "/sign-up/$": typeof SignUpSplatRoute
   "/teams/$teamId": typeof TeamsTeamIdRoute
   "/games/": typeof GamesIndexRoute
   "/players/": typeof PlayersIndexRoute
@@ -129,11 +156,14 @@ export interface FileRouteTypes {
     | "/"
     | "/games"
     | "/players"
+    | "/settings"
     | "/stats"
     | "/teams"
     | "/theme-preview"
     | "/games/$gameId"
     | "/players/$playerId"
+    | "/sign-in/$"
+    | "/sign-up/$"
     | "/teams/$teamId"
     | "/games/"
     | "/players/"
@@ -141,10 +171,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
+    | "/settings"
     | "/stats"
     | "/theme-preview"
     | "/games/$gameId"
     | "/players/$playerId"
+    | "/sign-in/$"
+    | "/sign-up/$"
     | "/teams/$teamId"
     | "/games"
     | "/players"
@@ -154,11 +187,14 @@ export interface FileRouteTypes {
     | "/"
     | "/games"
     | "/players"
+    | "/settings"
     | "/stats"
     | "/teams"
     | "/theme-preview"
     | "/games/$gameId"
     | "/players/$playerId"
+    | "/sign-in/$"
+    | "/sign-up/$"
     | "/teams/$teamId"
     | "/games/"
     | "/players/"
@@ -169,9 +205,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GamesRoute: typeof GamesRouteWithChildren
   PlayersRoute: typeof PlayersRouteWithChildren
+  SettingsRoute: typeof SettingsRoute
   StatsRoute: typeof StatsRoute
   TeamsRoute: typeof TeamsRouteWithChildren
   ThemePreviewRoute: typeof ThemePreviewRoute
+  SignInSplatRoute: typeof SignInSplatRoute
+  SignUpSplatRoute: typeof SignUpSplatRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -195,6 +234,13 @@ declare module "@tanstack/react-router" {
       path: "/stats"
       fullPath: "/stats"
       preLoaderRoute: typeof StatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/settings": {
+      id: "/settings"
+      path: "/settings"
+      fullPath: "/settings"
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/players": {
@@ -245,6 +291,20 @@ declare module "@tanstack/react-router" {
       fullPath: "/teams/$teamId"
       preLoaderRoute: typeof TeamsTeamIdRouteImport
       parentRoute: typeof TeamsRoute
+    }
+    "/sign-up/$": {
+      id: "/sign-up/$"
+      path: "/sign-up/$"
+      fullPath: "/sign-up/$"
+      preLoaderRoute: typeof SignUpSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/sign-in/$": {
+      id: "/sign-in/$"
+      path: "/sign-in/$"
+      fullPath: "/sign-in/$"
+      preLoaderRoute: typeof SignInSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     "/players/$playerId": {
       id: "/players/$playerId"
@@ -304,9 +364,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GamesRoute: GamesRouteWithChildren,
   PlayersRoute: PlayersRouteWithChildren,
+  SettingsRoute: SettingsRoute,
   StatsRoute: StatsRoute,
   TeamsRoute: TeamsRouteWithChildren,
   ThemePreviewRoute: ThemePreviewRoute,
+  SignInSplatRoute: SignInSplatRoute,
+  SignUpSplatRoute: SignUpSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
