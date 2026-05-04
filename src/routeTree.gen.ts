@@ -8,236 +8,306 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as GamesRouteImport } from "./routes/games";
-import { Route as GamesIndexRouteImport } from "./routes/games.index";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as PlayersRouteImport } from "./routes/players";
-import { Route as PlayersIndexRouteImport } from "./routes/players.index";
-import { Route as StatsRouteImport } from "./routes/stats";
-import { Route as TeamsRouteImport } from "./routes/teams";
-import { Route as TeamsIndexRouteImport } from "./routes/teams.index";
-import { Route as ThemePreviewRouteImport } from "./routes/theme-preview";
+import { Route as rootRouteImport } from "./routes/__root"
+import { Route as ThemePreviewRouteImport } from "./routes/theme-preview"
+import { Route as TeamsRouteImport } from "./routes/teams"
+import { Route as StatsRouteImport } from "./routes/stats"
+import { Route as PlayersRouteImport } from "./routes/players"
+import { Route as GamesRouteImport } from "./routes/games"
+import { Route as IndexRouteImport } from "./routes/index"
+import { Route as TeamsIndexRouteImport } from "./routes/teams.index"
+import { Route as PlayersIndexRouteImport } from "./routes/players.index"
+import { Route as GamesIndexRouteImport } from "./routes/games.index"
+import { Route as TeamsTeamIdRouteImport } from "./routes/teams.$teamId"
+import { Route as PlayersPlayerIdRouteImport } from "./routes/players.$playerId"
+import { Route as GamesGameIdRouteImport } from "./routes/games.$gameId"
 
 const ThemePreviewRoute = ThemePreviewRouteImport.update({
-	id: "/theme-preview",
-	path: "/theme-preview",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: "/theme-preview",
+  path: "/theme-preview",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamsRoute = TeamsRouteImport.update({
-	id: "/teams",
-	path: "/teams",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: "/teams",
+  path: "/teams",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StatsRoute = StatsRouteImport.update({
-	id: "/stats",
-	path: "/stats",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: "/stats",
+  path: "/stats",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlayersRoute = PlayersRouteImport.update({
-	id: "/players",
-	path: "/players",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: "/players",
+  path: "/players",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GamesRoute = GamesRouteImport.update({
-	id: "/games",
-	path: "/games",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: "/games",
+  path: "/games",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
-	id: "/",
-	path: "/",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: "/",
+  path: "/",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamsIndexRoute = TeamsIndexRouteImport.update({
-	id: "/",
-	path: "/",
-	getParentRoute: () => TeamsRoute,
-} as any);
+  id: "/",
+  path: "/",
+  getParentRoute: () => TeamsRoute,
+} as any)
 const PlayersIndexRoute = PlayersIndexRouteImport.update({
-	id: "/",
-	path: "/",
-	getParentRoute: () => PlayersRoute,
-} as any);
+  id: "/",
+  path: "/",
+  getParentRoute: () => PlayersRoute,
+} as any)
 const GamesIndexRoute = GamesIndexRouteImport.update({
-	id: "/",
-	path: "/",
-	getParentRoute: () => GamesRoute,
-} as any);
+  id: "/",
+  path: "/",
+  getParentRoute: () => GamesRoute,
+} as any)
+const TeamsTeamIdRoute = TeamsTeamIdRouteImport.update({
+  id: "/$teamId",
+  path: "/$teamId",
+  getParentRoute: () => TeamsRoute,
+} as any)
+const PlayersPlayerIdRoute = PlayersPlayerIdRouteImport.update({
+  id: "/$playerId",
+  path: "/$playerId",
+  getParentRoute: () => PlayersRoute,
+} as any)
+const GamesGameIdRoute = GamesGameIdRouteImport.update({
+  id: "/$gameId",
+  path: "/$gameId",
+  getParentRoute: () => GamesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-	"/": typeof IndexRoute;
-	"/games": typeof GamesRouteWithChildren;
-	"/players": typeof PlayersRouteWithChildren;
-	"/stats": typeof StatsRoute;
-	"/teams": typeof TeamsRouteWithChildren;
-	"/theme-preview": typeof ThemePreviewRoute;
-	"/games/": typeof GamesIndexRoute;
-	"/players/": typeof PlayersIndexRoute;
-	"/teams/": typeof TeamsIndexRoute;
+  "/": typeof IndexRoute
+  "/games": typeof GamesRouteWithChildren
+  "/players": typeof PlayersRouteWithChildren
+  "/stats": typeof StatsRoute
+  "/teams": typeof TeamsRouteWithChildren
+  "/theme-preview": typeof ThemePreviewRoute
+  "/games/$gameId": typeof GamesGameIdRoute
+  "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/teams/$teamId": typeof TeamsTeamIdRoute
+  "/games/": typeof GamesIndexRoute
+  "/players/": typeof PlayersIndexRoute
+  "/teams/": typeof TeamsIndexRoute
 }
 export interface FileRoutesByTo {
-	"/": typeof IndexRoute;
-	"/stats": typeof StatsRoute;
-	"/theme-preview": typeof ThemePreviewRoute;
-	"/games": typeof GamesIndexRoute;
-	"/players": typeof PlayersIndexRoute;
-	"/teams": typeof TeamsIndexRoute;
+  "/": typeof IndexRoute
+  "/stats": typeof StatsRoute
+  "/theme-preview": typeof ThemePreviewRoute
+  "/games/$gameId": typeof GamesGameIdRoute
+  "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/teams/$teamId": typeof TeamsTeamIdRoute
+  "/games": typeof GamesIndexRoute
+  "/players": typeof PlayersIndexRoute
+  "/teams": typeof TeamsIndexRoute
 }
 export interface FileRoutesById {
-	__root__: typeof rootRouteImport;
-	"/": typeof IndexRoute;
-	"/games": typeof GamesRouteWithChildren;
-	"/players": typeof PlayersRouteWithChildren;
-	"/stats": typeof StatsRoute;
-	"/teams": typeof TeamsRouteWithChildren;
-	"/theme-preview": typeof ThemePreviewRoute;
-	"/games/": typeof GamesIndexRoute;
-	"/players/": typeof PlayersIndexRoute;
-	"/teams/": typeof TeamsIndexRoute;
+  __root__: typeof rootRouteImport
+  "/": typeof IndexRoute
+  "/games": typeof GamesRouteWithChildren
+  "/players": typeof PlayersRouteWithChildren
+  "/stats": typeof StatsRoute
+  "/teams": typeof TeamsRouteWithChildren
+  "/theme-preview": typeof ThemePreviewRoute
+  "/games/$gameId": typeof GamesGameIdRoute
+  "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/teams/$teamId": typeof TeamsTeamIdRoute
+  "/games/": typeof GamesIndexRoute
+  "/players/": typeof PlayersIndexRoute
+  "/teams/": typeof TeamsIndexRoute
 }
 export interface FileRouteTypes {
-	fileRoutesByFullPath: FileRoutesByFullPath;
-	fullPaths:
-		| "/"
-		| "/games"
-		| "/players"
-		| "/stats"
-		| "/teams"
-		| "/theme-preview"
-		| "/games/"
-		| "/players/"
-		| "/teams/";
-	fileRoutesByTo: FileRoutesByTo;
-	to: "/" | "/stats" | "/theme-preview" | "/games" | "/players" | "/teams";
-	id:
-		| "__root__"
-		| "/"
-		| "/games"
-		| "/players"
-		| "/stats"
-		| "/teams"
-		| "/theme-preview"
-		| "/games/"
-		| "/players/"
-		| "/teams/";
-	fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | "/"
+    | "/games"
+    | "/players"
+    | "/stats"
+    | "/teams"
+    | "/theme-preview"
+    | "/games/$gameId"
+    | "/players/$playerId"
+    | "/teams/$teamId"
+    | "/games/"
+    | "/players/"
+    | "/teams/"
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | "/"
+    | "/stats"
+    | "/theme-preview"
+    | "/games/$gameId"
+    | "/players/$playerId"
+    | "/teams/$teamId"
+    | "/games"
+    | "/players"
+    | "/teams"
+  id:
+    | "__root__"
+    | "/"
+    | "/games"
+    | "/players"
+    | "/stats"
+    | "/teams"
+    | "/theme-preview"
+    | "/games/$gameId"
+    | "/players/$playerId"
+    | "/teams/$teamId"
+    | "/games/"
+    | "/players/"
+    | "/teams/"
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-	IndexRoute: typeof IndexRoute;
-	GamesRoute: typeof GamesRouteWithChildren;
-	PlayersRoute: typeof PlayersRouteWithChildren;
-	StatsRoute: typeof StatsRoute;
-	TeamsRoute: typeof TeamsRouteWithChildren;
-	ThemePreviewRoute: typeof ThemePreviewRoute;
+  IndexRoute: typeof IndexRoute
+  GamesRoute: typeof GamesRouteWithChildren
+  PlayersRoute: typeof PlayersRouteWithChildren
+  StatsRoute: typeof StatsRoute
+  TeamsRoute: typeof TeamsRouteWithChildren
+  ThemePreviewRoute: typeof ThemePreviewRoute
 }
 
 declare module "@tanstack/react-router" {
-	interface FileRoutesByPath {
-		"/theme-preview": {
-			id: "/theme-preview";
-			path: "/theme-preview";
-			fullPath: "/theme-preview";
-			preLoaderRoute: typeof ThemePreviewRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/teams": {
-			id: "/teams";
-			path: "/teams";
-			fullPath: "/teams";
-			preLoaderRoute: typeof TeamsRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/stats": {
-			id: "/stats";
-			path: "/stats";
-			fullPath: "/stats";
-			preLoaderRoute: typeof StatsRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/players": {
-			id: "/players";
-			path: "/players";
-			fullPath: "/players";
-			preLoaderRoute: typeof PlayersRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/games": {
-			id: "/games";
-			path: "/games";
-			fullPath: "/games";
-			preLoaderRoute: typeof GamesRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/": {
-			id: "/";
-			path: "/";
-			fullPath: "/";
-			preLoaderRoute: typeof IndexRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/teams/": {
-			id: "/teams/";
-			path: "/";
-			fullPath: "/teams/";
-			preLoaderRoute: typeof TeamsIndexRouteImport;
-			parentRoute: typeof TeamsRoute;
-		};
-		"/players/": {
-			id: "/players/";
-			path: "/";
-			fullPath: "/players/";
-			preLoaderRoute: typeof PlayersIndexRouteImport;
-			parentRoute: typeof PlayersRoute;
-		};
-		"/games/": {
-			id: "/games/";
-			path: "/";
-			fullPath: "/games/";
-			preLoaderRoute: typeof GamesIndexRouteImport;
-			parentRoute: typeof GamesRoute;
-		};
-	}
+  interface FileRoutesByPath {
+    "/theme-preview": {
+      id: "/theme-preview"
+      path: "/theme-preview"
+      fullPath: "/theme-preview"
+      preLoaderRoute: typeof ThemePreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/teams": {
+      id: "/teams"
+      path: "/teams"
+      fullPath: "/teams"
+      preLoaderRoute: typeof TeamsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/stats": {
+      id: "/stats"
+      path: "/stats"
+      fullPath: "/stats"
+      preLoaderRoute: typeof StatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/players": {
+      id: "/players"
+      path: "/players"
+      fullPath: "/players"
+      preLoaderRoute: typeof PlayersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/games": {
+      id: "/games"
+      path: "/games"
+      fullPath: "/games"
+      preLoaderRoute: typeof GamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/": {
+      id: "/"
+      path: "/"
+      fullPath: "/"
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/teams/": {
+      id: "/teams/"
+      path: "/"
+      fullPath: "/teams/"
+      preLoaderRoute: typeof TeamsIndexRouteImport
+      parentRoute: typeof TeamsRoute
+    }
+    "/players/": {
+      id: "/players/"
+      path: "/"
+      fullPath: "/players/"
+      preLoaderRoute: typeof PlayersIndexRouteImport
+      parentRoute: typeof PlayersRoute
+    }
+    "/games/": {
+      id: "/games/"
+      path: "/"
+      fullPath: "/games/"
+      preLoaderRoute: typeof GamesIndexRouteImport
+      parentRoute: typeof GamesRoute
+    }
+    "/teams/$teamId": {
+      id: "/teams/$teamId"
+      path: "/$teamId"
+      fullPath: "/teams/$teamId"
+      preLoaderRoute: typeof TeamsTeamIdRouteImport
+      parentRoute: typeof TeamsRoute
+    }
+    "/players/$playerId": {
+      id: "/players/$playerId"
+      path: "/$playerId"
+      fullPath: "/players/$playerId"
+      preLoaderRoute: typeof PlayersPlayerIdRouteImport
+      parentRoute: typeof PlayersRoute
+    }
+    "/games/$gameId": {
+      id: "/games/$gameId"
+      path: "/$gameId"
+      fullPath: "/games/$gameId"
+      preLoaderRoute: typeof GamesGameIdRouteImport
+      parentRoute: typeof GamesRoute
+    }
+  }
 }
 
 interface GamesRouteChildren {
-	GamesIndexRoute: typeof GamesIndexRoute;
+  GamesGameIdRoute: typeof GamesGameIdRoute
+  GamesIndexRoute: typeof GamesIndexRoute
 }
 
 const GamesRouteChildren: GamesRouteChildren = {
-	GamesIndexRoute: GamesIndexRoute,
-};
+  GamesGameIdRoute: GamesGameIdRoute,
+  GamesIndexRoute: GamesIndexRoute,
+}
 
-const GamesRouteWithChildren = GamesRoute._addFileChildren(GamesRouteChildren);
+const GamesRouteWithChildren = GamesRoute._addFileChildren(GamesRouteChildren)
 
 interface PlayersRouteChildren {
-	PlayersIndexRoute: typeof PlayersIndexRoute;
+  PlayersPlayerIdRoute: typeof PlayersPlayerIdRoute
+  PlayersIndexRoute: typeof PlayersIndexRoute
 }
 
 const PlayersRouteChildren: PlayersRouteChildren = {
-	PlayersIndexRoute: PlayersIndexRoute,
-};
+  PlayersPlayerIdRoute: PlayersPlayerIdRoute,
+  PlayersIndexRoute: PlayersIndexRoute,
+}
 
-const PlayersRouteWithChildren = PlayersRoute._addFileChildren(PlayersRouteChildren);
+const PlayersRouteWithChildren =
+  PlayersRoute._addFileChildren(PlayersRouteChildren)
 
 interface TeamsRouteChildren {
-	TeamsIndexRoute: typeof TeamsIndexRoute;
+  TeamsTeamIdRoute: typeof TeamsTeamIdRoute
+  TeamsIndexRoute: typeof TeamsIndexRoute
 }
 
 const TeamsRouteChildren: TeamsRouteChildren = {
-	TeamsIndexRoute: TeamsIndexRoute,
-};
+  TeamsTeamIdRoute: TeamsTeamIdRoute,
+  TeamsIndexRoute: TeamsIndexRoute,
+}
 
-const TeamsRouteWithChildren = TeamsRoute._addFileChildren(TeamsRouteChildren);
+const TeamsRouteWithChildren = TeamsRoute._addFileChildren(TeamsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-	IndexRoute: IndexRoute,
-	GamesRoute: GamesRouteWithChildren,
-	PlayersRoute: PlayersRouteWithChildren,
-	StatsRoute: StatsRoute,
-	TeamsRoute: TeamsRouteWithChildren,
-	ThemePreviewRoute: ThemePreviewRoute,
-};
+  IndexRoute: IndexRoute,
+  GamesRoute: GamesRouteWithChildren,
+  PlayersRoute: PlayersRouteWithChildren,
+  StatsRoute: StatsRoute,
+  TeamsRoute: TeamsRouteWithChildren,
+  ThemePreviewRoute: ThemePreviewRoute,
+}
 export const routeTree = rootRouteImport
-	._addFileChildren(rootRouteChildren)
-	._addFileTypes<FileRouteTypes>();
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
