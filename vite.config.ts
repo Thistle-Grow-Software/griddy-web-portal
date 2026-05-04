@@ -1,4 +1,5 @@
 import path from "node:path";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
@@ -9,7 +10,14 @@ import { defineConfig } from "vitest/config";
 // tsconfig.app.json so editor tooling and the bundler agree.
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [react()],
+	plugins: [
+		tanstackRouter({
+			target: "react",
+			autoCodeSplitting: true,
+			quoteStyle: "double",
+		}),
+		react(),
+	],
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "src"),

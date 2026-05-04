@@ -2,20 +2,23 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
 
-import { AppShell, Burger, Group, MantineProvider, Text, Title } from "@mantine/core";
+import { Outlet, createRootRoute } from "@tanstack/react-router";
+
+import { AppShell, Burger, Group, MantineProvider, NavLink, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 
-import { ThemeToggle } from "./components/ThemeToggle";
-import { ThemePreviewPage } from "./pages/ThemePreview.page";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-export function App() {
+export const Route = createRootRoute({
+	component: RootComponent,
+});
+
+function RootComponent() {
 	const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
 	const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
-
-	const isThemePreview =
-		typeof window !== "undefined" && window.location.pathname === "/theme-preview";
 
 	return (
 		<MantineProvider defaultColorScheme="auto">
@@ -43,10 +46,18 @@ export function App() {
 						</Group>
 					</AppShell.Header>
 
-					<AppShell.Navbar p="md">Navbar</AppShell.Navbar>
+					<AppShell.Navbar p="md">
+						<NavLink href="/" label="Home" />
+						<NavLink href="/theme-preview" label="Theme Preview" />
+						<NavLink href="/players" label="Players" />
+						<NavLink href="/games" label="Games" />
+						<NavLink href="/stats" label="Stats" />
+						<NavLink href="/settings" label="Settings" />
+					</AppShell.Navbar>
 
 					<AppShell.Main>
-						{isThemePreview ? <ThemePreviewPage /> : <Text>Hello world!</Text>}
+						<Outlet />
+						<TanStackRouterDevtools position="bottom-right" />
 					</AppShell.Main>
 				</AppShell>
 			</ModalsProvider>
