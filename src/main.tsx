@@ -102,6 +102,15 @@ if (!rootElement) {
 	throw new Error("Root element #root not found in document.");
 }
 
+async function maybeStartMockApi() {
+	if (!import.meta.env.DEV) return;
+	if (import.meta.env.VITE_E2E_MOCK_API !== "true") return;
+	const { worker } = await import("@/mocks/browser");
+	await worker.start({ onUnhandledRequest: "bypass" });
+}
+
+await maybeStartMockApi();
+
 createRoot(rootElement).render(
 	<StrictMode>
 		<ColorSchemeScript defaultColorScheme={"auto"} />
