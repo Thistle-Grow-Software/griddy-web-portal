@@ -44,5 +44,7 @@ export default defineConfig({
 		environment: "happy-dom",
 		setupFiles: ["./vitest.setup.ts"],
 		css: true,
+		// e2e/ is Playwright's territory — skip it during Vitest runs.
+		exclude: ["**/node_modules/**", "**/dist/**", "e2e/**"],
 	},
 });
