@@ -14,7 +14,8 @@
       "playwright-report",
       "test-results",
       "src/api/generated",
-      "src/routeTree.gen.ts"
+      "src/routeTree.gen.ts",
+      "public/mockServiceWorker.js"
     ]
   },
   "formatter": {

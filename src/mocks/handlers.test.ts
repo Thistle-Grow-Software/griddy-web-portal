@@ -10,13 +10,16 @@ import { server } from "./server";
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
 describe("MSW reference handler", () => {
-	it("returns the seeded teams payload from the default handler", async () => {
-		const response = await fetch(`${API_BASE}/api/teams/`);
+	it("returns a paginated, league-filtered teams payload from the default handler", async () => {
+		const response = await fetch(`${API_BASE}/api/teams/?league=NFL&page_size=20`);
 		expect(response.ok).toBe(true);
 
 		const body = await response.json();
-		expect(body.count).toBe(2);
-		expect(body.results.map((t: { id: string }) => t.id)).toEqual(["nfl-sea", "nfl-sf"]);
+		expect(body.count).toBeGreaterThan(0);
+		expect(body.page).toBe(1);
+		expect(body.pageSize).toBe(20);
+		expect(body.results.every((t: { league: string }) => t.league === "NFL")).toBe(true);
+		expect(body.availableSeasons.NFL).toContain(2025);
 	});
 
 	it("supports per-test overrides via server.use(...)", async () => {
