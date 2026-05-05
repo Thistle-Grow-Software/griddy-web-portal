@@ -1,5 +1,14 @@
 import "@testing-library/jest-dom/vitest";
-import { vi } from "vitest";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { server } from "./src/mocks/server";
+
+// MSW: any request without a matching handler fails the test instead of
+// silently hitting the network. Keeps tests deterministic and forces every
+// new fetch to be declared in src/mocks/handlers.ts (or overridden per-test
+// with server.use(...)).
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 if (typeof window !== "undefined") {
 	if (!window.matchMedia) {

@@ -50,6 +50,8 @@ The dev server has HMR enabled. Edit anything under `src/` and the browser updat
 | `pnpm test` | Run the Vitest suite once. |
 | `pnpm test:watch` | Run Vitest in watch mode. |
 | `pnpm test:coverage` | Run tests with V8 coverage reporting. |
+| `pnpm test:e2e` | Run the Playwright E2E suite (boots `pnpm preview` automatically). |
+| `pnpm test:e2e:ui` | Open Playwright's UI mode for interactive debugging. |
 
 ### Environment variables
 
@@ -60,8 +62,81 @@ Copy `.env.example` to `.env.local` and fill in values for any required variable
 | `VITE_CLERK_PUBLISHABLE_KEY` | **Required** | Clerk publishable key for the configured instance (dev/staging/prod). The app throws at startup if missing. Grab it from the Clerk Dashboard → API Keys. |
 | `VITE_SENTRY_DSN` | Optional | Sentry DSN. SDK no-ops when absent — leave blank locally to avoid spamming Sentry. |
 | `VITE_API_BASE_URL` | Planned | Griddy API origin (introduced with the OpenAPI client story). |
+| `CLERK_PUBLISHABLE_KEY` | E2E only | Clerk **test** publishable key — used by Playwright's global setup to mint testing tokens. Never the production key. |
+| `CLERK_SECRET_KEY` | E2E only | Clerk **test** secret key — Playwright global setup only. Never the production key. |
+| `E2E_CLERK_USER_USERNAME` | E2E only | Pre-provisioned test user in the Clerk test instance. Smoke spec skips when unset. |
+| `E2E_CLERK_USER_PASSWORD` | E2E only | Password for the pre-provisioned test user. |
 
 Anything Vite-exposed must be prefixed with `VITE_`. Server-only secrets do not exist in this app — the portal is browser-only and talks to the Griddy API directly. CI also reads `SENTRY_AUTH_TOKEN` (Secret), `SENTRY_ORG`, and `SENTRY_PROJECT` (Variables) on the build step to upload source maps; they are never bundled into the client.
+
+## Testing
+
+Three layers of tests live in this repo:
+
+| Layer | Tooling | Location | Runs on |
+| --- | --- | --- | --- |
+| Unit + component | Vitest + React Testing Library | `src/**/*.test.ts(x)` | every PR |
+| API mocking | [MSW](https://mswjs.io) (Node interceptor) | `src/mocks/` | every PR (via Vitest) |
+| End-to-end | Playwright | `e2e/*.spec.ts` | pushes to `main` and manual dispatch (see `.github/workflows/e2e.yml`) |
+
+### Unit + component tests
+
+Use the wrappers in `src/test-utils.tsx` rather than `@testing-library/react` directly — they
+provide a fresh `QueryClient` and the same Mantine providers the app uses at runtime.
+
+```tsx
+import { renderWithProviders, screen, userEvent } from "@/test-utils";
+
+renderWithProviders(<MyComponent />);
+```
+
+Components that use Clerk hooks should mock `@clerk/react` per-file with `vi.mock`. The
+`renderWithProviders` wrapper deliberately does not wrap with `<ClerkProvider>` because
+real Clerk requires network access; mocking the hooks keeps tests hermetic.
+
+### MSW (Mock Service Worker)
+
+API requests in tests are mocked at the network layer by MSW. Default handlers live in
+`src/mocks/handlers.ts`; the Node server is started for the whole test run from
+`vitest.setup.ts` with `onUnhandledRequest: "error"` — any fetch without a matching
+handler **fails the test**, so missing mocks surface immediately.
+
+Per-test overrides use `server.use(...)`:
+
+```ts
+import { HttpResponse, http } from "msw";
+import { server } from "@/mocks/server";
+
+server.use(
+  http.get("/api/teams/", () => HttpResponse.json({ count: 0, results: [] })),
+);
+```
+
+Handlers run between `beforeAll` and `afterAll`; `afterEach` resets handler overrides
+back to the defaults declared in `handlers.ts`.
+
+### End-to-end tests
+
+Playwright drives a real Chromium browser against the production preview build
+(`pnpm build && pnpm preview`). Authentication uses Clerk's testing tokens — the E2E suite
+exchanges `CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY` for short-lived testing tokens via
+`@clerk/testing/playwright`, so specs sign in without an interactive OAuth flow.
+
+Set these to run E2E locally (use the **test** Clerk instance, never production):
+
+```bash
+# In .env.local — never commit values
+CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+E2E_CLERK_USER_USERNAME=playwright-smoke@example.com
+E2E_CLERK_USER_PASSWORD=...
+```
+
+When these are absent the smoke spec skips itself rather than failing, so a misconfigured
+environment doesn't show up as a test break.
+
+E2E only runs in CI on `main` pushes — too slow to gate every PR — and uploads
+`playwright-report/` (always) and `test-results/` (on failure) as workflow artifacts.
 
 ## Project layout
 
