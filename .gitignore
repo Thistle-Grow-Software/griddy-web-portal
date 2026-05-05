@@ -21,6 +21,7 @@ coverage/
 playwright-report/
 test-results/
 .playwright/
+playwright/.auth/
 
 # Editors
 .idea/

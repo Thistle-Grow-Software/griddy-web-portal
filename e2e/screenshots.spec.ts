@@ -1,23 +1,20 @@
 import { expect, test } from "@playwright/test";
-import { signInViaClerk } from "./sign-in";
 
-const username = process.env.E2E_CLERK_USER_USERNAME;
-const password = process.env.E2E_CLERK_USER_PASSWORD;
-
-test.describe.configure({ mode: "serial" });
+// Auth comes from the persisted storage state set up by `auth.setup.ts`
+// (configured as a project dependency in playwright.config.ts) — these specs
+// no longer drive the Clerk sign-in flow on every run.
 
 test.describe("screenshots", () => {
-	test.skip(!username || !password, "E2E Clerk credentials missing");
-
-	test("captures /teams, /players, and their detail tabs", async ({ page }) => {
-		// Single sign-in, two captures — running signInViaClerk twice in quick
-		// succession trips Clerk's per-device verification rate limit.
-		await signInViaClerk(page, username as string, password as string);
-
+	test("captures /teams and /teams/$teamId tabs", async ({ page }) => {
 		await page.goto("/teams");
 		await expect(page.getByText("Buffalo Bills").first()).toBeVisible({ timeout: 15_000 });
-		await page.screenshot({ path: "docs/screenshots/teams/teams-browse.png", fullPage: true });
+		await page.screenshot({
+			path: "docs/screenshots/teams/teams-browse.png",
+			fullPage: true,
+		});
 
+		// Browse with NFL filter — Mantine SegmentedControl exposes labels as
+		// either radio or button elements depending on version; click the label.
 		await page.locator("label").filter({ hasText: /^NFL$/ }).first().click();
 		await expect(page.getByText("Kansas City Chiefs")).toBeVisible({ timeout: 10_000 });
 		await page.screenshot({
@@ -55,9 +52,10 @@ test.describe("screenshots", () => {
 			path: "docs/screenshots/teams/team-detail-404.png",
 			fullPage: true,
 		});
+	});
 
-		// ─── Players ────────────────────────────────────────────────────────
-
+	test("captures /players and /players/$playerId tabs", async ({ page }) => {
+		// Browse — default (all leagues)
 		await page.goto("/players");
 		await expect(page.getByTestId("player-table")).toBeVisible({ timeout: 15_000 });
 		// Wait for at least one row to render so the screenshot isn't empty.
@@ -74,9 +72,8 @@ test.describe("screenshots", () => {
 		await expect(page.locator('[data-testid^="player-row-"]').first()).toBeVisible({
 			timeout: 10_000,
 		});
-		// Open the position select and pick QB. The MultiSelect/Select Mantine
-		// markup exposes both the input and the listbox under the same label,
-		// so reach for the combobox role specifically.
+		// Mantine's Select markup exposes both the input and the listbox under
+		// the same accessible label, so reach for the combobox role specifically.
 		await page.getByRole("combobox", { name: "Position filter" }).click();
 		await page.getByRole("option", { name: "QB", exact: true }).click();
 		await expect(page.locator('[data-testid^="player-row-"]').first()).toBeVisible({
@@ -105,7 +102,6 @@ test.describe("screenshots", () => {
 			fullPage: true,
 		});
 
-		// Game Log tab
 		await page.getByRole("tab", { name: "Game Log" }).click();
 		await expect(page.getByLabel("Season")).toBeVisible({ timeout: 5_000 });
 		await page.screenshot({
@@ -113,7 +109,6 @@ test.describe("screenshots", () => {
 			fullPage: true,
 		});
 
-		// Bio tab
 		await page.getByRole("tab", { name: "Bio" }).click();
 		await expect(page.getByText(/college|date of birth/i).first()).toBeVisible({
 			timeout: 5_000,
@@ -123,7 +118,6 @@ test.describe("screenshots", () => {
 			fullPage: true,
 		});
 
-		// 404
 		await page.goto("/players/does-not-exist");
 		await expect(page.getByRole("heading", { name: /Player not found/i })).toBeVisible({
 			timeout: 15_000,

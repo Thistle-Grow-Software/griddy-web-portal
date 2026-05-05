@@ -4,14 +4,16 @@ import type { Page } from "@playwright/test";
 /**
  * Drives the Clerk-hosted sign-in flow end-to-end:
  *   email → password → "new device" email OTP (magic 424242 for `+clerk_test`
- *   users) → wait for the session to be fully established before returning.
+ *   users) → wait for the session to fully establish before returning.
  *
- * Note: Clerk programmatic sign-in (`clerk.signIn`) returns "Identifier is
- * invalid" against this test instance regardless of identifier shape, so we
- * drive the UI. Clerk per-user OTP rate-limits mean back-to-back sign-ins
- * may fail with "You need to send a verification code before attempting to
- * verify"; sign in *once per test run* and capture all screenshots within
- * the same browser session.
+ * Notes:
+ * - Clerk programmatic sign-in (`clerk.signIn`) returns "Identifier is invalid"
+ *   against this test instance regardless of identifier shape, so we drive the
+ *   UI instead.
+ * - Clerk per-user OTP rate-limits mean back-to-back sign-ins fail with "You
+ *   need to send a verification code before attempting to verify." Persisted
+ *   storage state (see `e2e/auth.setup.ts`) avoids the need to call this on
+ *   every test run.
  */
 export async function signInViaClerk(
 	page: Page,
@@ -39,8 +41,13 @@ export async function signInViaClerk(
 			.locator('input[inputmode="numeric"], input[autocomplete="one-time-code"]')
 			.first();
 		await firstCell.waitFor({ state: "visible", timeout: 10_000 });
+		// Clerk dispatches the verification email asynchronously after the
+		// password submit. If we type before dispatch lands, it errors with
+		// "You need to send a verification code before attempting to verify."
+		// Waiting 1.5s lets the dispatch complete.
+		await page.waitForTimeout(1500);
 		await firstCell.click();
-		await page.keyboard.type("424242");
+		await page.keyboard.type("424242", { delay: 60 });
 	}
 
 	await page.waitForURL((url) => !url.pathname.startsWith("/sign-in"), {
