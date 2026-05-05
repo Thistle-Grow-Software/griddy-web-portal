@@ -102,35 +102,41 @@ if (!rootElement) {
 	throw new Error("Root element #root not found in document.");
 }
 
-async function maybeStartMockApi() {
+async function maybeStartMockApi(): Promise<void> {
 	if (!import.meta.env.DEV) return;
 	if (import.meta.env.VITE_E2E_MOCK_API !== "true") return;
 	const { worker } = await import("@/mocks/browser");
 	await worker.start({ onUnhandledRequest: "bypass" });
 }
 
-await maybeStartMockApi();
+// Wrap in an async function rather than using a top-level await — the
+// production build targets es2020, which doesn't support top-level await.
+async function bootstrap(): Promise<void> {
+	await maybeStartMockApi();
 
-createRoot(rootElement).render(
-	<StrictMode>
-		<ColorSchemeScript defaultColorScheme={"auto"} />
-		<ErrorBoundary fallback={({ resetError }) => <ErrorFallback resetError={resetError} />}>
-			<ClerkProvider
-				publishableKey={PUBLISHABLE_KEY}
-				signInUrl="/sign-in"
-				signUpUrl="/sign-up"
-				signInFallbackRedirectUrl="/"
-				signUpFallbackRedirectUrl="/"
-				routerPush={(to) => router.history.push(to)}
-				routerReplace={(to) => router.history.replace(to)}
-			>
-				<QueryClientProvider client={queryClient}>
-					<ApiClientBootstrap />
-					<SentryUserBootstrap />
-					<InnerApp />
-					{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-				</QueryClientProvider>
-			</ClerkProvider>
-		</ErrorBoundary>
-	</StrictMode>,
-);
+	createRoot(rootElement as HTMLElement).render(
+		<StrictMode>
+			<ColorSchemeScript defaultColorScheme={"auto"} />
+			<ErrorBoundary fallback={({ resetError }) => <ErrorFallback resetError={resetError} />}>
+				<ClerkProvider
+					publishableKey={PUBLISHABLE_KEY}
+					signInUrl="/sign-in"
+					signUpUrl="/sign-up"
+					signInFallbackRedirectUrl="/"
+					signUpFallbackRedirectUrl="/"
+					routerPush={(to) => router.history.push(to)}
+					routerReplace={(to) => router.history.replace(to)}
+				>
+					<QueryClientProvider client={queryClient}>
+						<ApiClientBootstrap />
+						<SentryUserBootstrap />
+						<InnerApp />
+						{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+					</QueryClientProvider>
+				</ClerkProvider>
+			</ErrorBoundary>
+		</StrictMode>,
+	);
+}
+
+void bootstrap();
