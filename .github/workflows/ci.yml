@@ -52,10 +52,17 @@ jobs:
 
       - name: Build
         env:
-          # Vite inlines VITE_* vars at build time. Clerk publishable keys are
-          # public-by-design (embedded in the JS bundle), so this is a non-secret
-          # repo Variable, not a Secret.
+          # Vite inlines VITE_* vars at build time. The Clerk and Sentry
+          # frontend keys are public-by-design (embedded in the JS bundle), so
+          # they're non-secret repo Variables. SENTRY_AUTH_TOKEN is sensitive
+          # (server-side write token), so it's a Secret. Source-map upload
+          # no-ops automatically when the token is absent.
           VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY }}
+          VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
+          VITE_BUILD_SHA: ${{ github.sha }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
         run: pnpm build
 
       - uses: actions/upload-artifact@v4

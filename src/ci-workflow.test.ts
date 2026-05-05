@@ -48,4 +48,11 @@ describe("CI workflow", () => {
 		expect(workflow).toContain("pnpm gen:api");
 		expect(workflow).toContain("git diff --quiet -- src/api/generated");
 	});
+
+	it("wires Sentry source-map upload env vars into the build step", () => {
+		expect(workflow).toContain("SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}");
+		expect(workflow).toContain("SENTRY_ORG: ${{ vars.SENTRY_ORG }}");
+		expect(workflow).toContain("SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}");
+		expect(workflow).toContain("VITE_BUILD_SHA: ${{ github.sha }}");
+	});
 });

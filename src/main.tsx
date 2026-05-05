@@ -1,7 +1,10 @@
 import { configureApiClient } from "@/api/client";
+import { ErrorFallback } from "@/components/ErrorFallback";
+import { initSentry, setSentryUser } from "@/observability/sentry";
 import { routeTree } from "@/routeTree.gen";
 import { ClerkProvider, useAuth, useClerk } from "@clerk/react";
 import { ColorSchemeScript } from "@mantine/core";
+import { ErrorBoundary } from "@sentry/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
@@ -13,6 +16,13 @@ const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
 	throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY (see .env.example).");
 }
+
+initSentry({
+	dsn: import.meta.env.VITE_SENTRY_DSN,
+	environment: import.meta.env.MODE,
+	release: import.meta.env.VITE_BUILD_SHA,
+	tracesSampleRate: import.meta.env.PROD ? 0.2 : 0,
+});
 
 const router = createRouter({
 	routeTree,
@@ -58,6 +68,17 @@ function ApiClientBootstrap() {
 	return null;
 }
 
+function SentryUserBootstrap() {
+	const auth = useAuth();
+
+	useEffect(() => {
+		if (!auth.isLoaded) return;
+		setSentryUser(auth.isSignedIn && auth.userId ? auth.userId : null);
+	}, [auth.isLoaded, auth.isSignedIn, auth.userId]);
+
+	return null;
+}
+
 function InnerApp() {
 	const auth = useAuth();
 	// Re-run beforeLoad guards whenever sign-in state flips (e.g. user signs out
@@ -84,20 +105,23 @@ if (!rootElement) {
 createRoot(rootElement).render(
 	<StrictMode>
 		<ColorSchemeScript defaultColorScheme={"auto"} />
-		<ClerkProvider
-			publishableKey={PUBLISHABLE_KEY}
-			signInUrl="/sign-in"
-			signUpUrl="/sign-up"
-			signInFallbackRedirectUrl="/"
-			signUpFallbackRedirectUrl="/"
-			routerPush={(to) => router.history.push(to)}
-			routerReplace={(to) => router.history.replace(to)}
-		>
-			<QueryClientProvider client={queryClient}>
-				<ApiClientBootstrap />
-				<InnerApp />
-				{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-			</QueryClientProvider>
-		</ClerkProvider>
+		<ErrorBoundary fallback={({ resetError }) => <ErrorFallback resetError={resetError} />}>
+			<ClerkProvider
+				publishableKey={PUBLISHABLE_KEY}
+				signInUrl="/sign-in"
+				signUpUrl="/sign-up"
+				signInFallbackRedirectUrl="/"
+				signUpFallbackRedirectUrl="/"
+				routerPush={(to) => router.history.push(to)}
+				routerReplace={(to) => router.history.replace(to)}
+			>
+				<QueryClientProvider client={queryClient}>
+					<ApiClientBootstrap />
+					<SentryUserBootstrap />
+					<InnerApp />
+					{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+				</QueryClientProvider>
+			</ClerkProvider>
+		</ErrorBoundary>
 	</StrictMode>,
 );

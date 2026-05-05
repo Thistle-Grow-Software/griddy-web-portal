@@ -58,11 +58,10 @@ Copy `.env.example` to `.env.local` and fill in values for any required variable
 | Variable | Status | Purpose |
 | --- | --- | --- |
 | `VITE_CLERK_PUBLISHABLE_KEY` | **Required** | Clerk publishable key for the configured instance (dev/staging/prod). The app throws at startup if missing. Grab it from the Clerk Dashboard → API Keys. |
+| `VITE_SENTRY_DSN` | Optional | Sentry DSN. SDK no-ops when absent — leave blank locally to avoid spamming Sentry. |
 | `VITE_API_BASE_URL` | Planned | Griddy API origin (introduced with the OpenAPI client story). |
-| `VITE_SENTRY_DSN` | Planned | Sentry DSN (introduced with the observability story). |
-| `VITE_POSTHOG_KEY` | Planned | PostHog API key (introduced with the observability story). |
 
-Anything Vite-exposed must be prefixed with `VITE_`. Server-only secrets do not exist in this app — the portal is browser-only and talks to the Griddy API directly.
+Anything Vite-exposed must be prefixed with `VITE_`. Server-only secrets do not exist in this app — the portal is browser-only and talks to the Griddy API directly. CI also reads `SENTRY_AUTH_TOKEN` (Secret), `SENTRY_ORG`, and `SENTRY_PROJECT` (Variables) on the build step to upload source maps; they are never bundled into the client.
 
 ## Project layout
 
