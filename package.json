@@ -46,6 +46,7 @@
     "@tanstack/react-query-devtools": "^5.100.9",
     "@tanstack/react-router": "^1.168.25",
     "@tanstack/react-router-devtools": "^1.166.13",
+    "@tanstack/react-virtual": "^3.13.24",
     "@tanstack/router-plugin": "^1.167.28",
     "dayjs": "^1.11.20",
     "postcss": "^8.5.12",
