@@ -43,4 +43,9 @@ describe("CI workflow", () => {
 		expect(workflow).not.toContain("actions/github-script");
 		expect(workflow).not.toContain("griddy-web-portal-preview");
 	});
+
+	it("verifies the generated API client is in sync with the schema", () => {
+		expect(workflow).toContain("pnpm gen:api");
+		expect(workflow).toContain("git diff --quiet -- src/api/generated");
+	});
 });

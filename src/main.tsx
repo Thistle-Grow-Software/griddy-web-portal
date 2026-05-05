@@ -1,6 +1,9 @@
+import { configureApiClient } from "@/api/client";
 import { routeTree } from "@/routeTree.gen";
-import { ClerkProvider, useAuth } from "@clerk/react";
+import { ClerkProvider, useAuth, useClerk } from "@clerk/react";
 import { ColorSchemeScript } from "@mantine/core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
@@ -24,6 +27,35 @@ declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;
 	}
+}
+
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 5 * 60 * 1000,
+			gcTime: 10 * 60 * 1000,
+			retry: 1,
+			refetchOnWindowFocus: false,
+		},
+	},
+});
+
+function ApiClientBootstrap() {
+	const clerk = useClerk();
+
+	useEffect(() => {
+		configureApiClient({
+			getToken: () => clerk.session?.getToken() ?? Promise.resolve(null),
+			forceRefreshToken: () =>
+				clerk.session?.getToken({ skipCache: true }) ?? Promise.resolve(null),
+			signOutAndRedirect: async () => {
+				await clerk.signOut();
+				router.history.push("/sign-in");
+			},
+		});
+	}, [clerk]);
+
+	return null;
 }
 
 function InnerApp() {
@@ -61,7 +93,11 @@ createRoot(rootElement).render(
 			routerPush={(to) => router.history.push(to)}
 			routerReplace={(to) => router.history.replace(to)}
 		>
-			<InnerApp />
+			<QueryClientProvider client={queryClient}>
+				<ApiClientBootstrap />
+				<InnerApp />
+				{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+			</QueryClientProvider>
 		</ClerkProvider>
 	</StrictMode>,
 );
