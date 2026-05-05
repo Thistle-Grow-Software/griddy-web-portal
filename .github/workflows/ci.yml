@@ -42,6 +42,11 @@ jobs:
         run: pnpm test
 
       - name: Build
+        env:
+          # Vite inlines VITE_* vars at build time. Clerk publishable keys are
+          # public-by-design (embedded in the JS bundle), so this is a non-secret
+          # repo Variable, not a Secret.
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY }}
         run: pnpm build
 
       - uses: actions/upload-artifact@v4
