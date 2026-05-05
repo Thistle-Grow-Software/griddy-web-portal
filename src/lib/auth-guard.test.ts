@@ -12,10 +12,6 @@ function callGuard(auth: AuthLike, href = "/games/123") {
 }
 
 describe("requireAuth", () => {
-	it("does nothing while Clerk is still loading", () => {
-		expect(() => callGuard({ isLoaded: false, isSignedIn: undefined })).not.toThrow();
-	});
-
 	it("does nothing when the user is signed in", () => {
 		expect(() => callGuard({ isLoaded: true, isSignedIn: true })).not.toThrow();
 	});

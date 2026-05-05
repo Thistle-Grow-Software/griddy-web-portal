@@ -10,7 +10,9 @@ export function requireAuth({
 	context: { auth: AuthContext };
 	location: { href: string };
 }) {
-	if (context.auth.isLoaded && !context.auth.isSignedIn) {
+	// main.tsx blocks RouterProvider until Clerk has loaded, so by the time any
+	// beforeLoad runs, isLoaded is guaranteed true.
+	if (!context.auth.isSignedIn) {
 		throw redirect({
 			to: "/sign-in/$",
 			params: { _splat: "" },

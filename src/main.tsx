@@ -2,7 +2,7 @@ import { routeTree } from "@/routeTree.gen";
 import { ClerkProvider, useAuth } from "@clerk/react";
 import { ColorSchemeScript } from "@mantine/core";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { StrictMode } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "@/index.css";
 
@@ -28,6 +28,19 @@ declare module "@tanstack/react-router" {
 
 function InnerApp() {
 	const auth = useAuth();
+	// Re-run beforeLoad guards whenever sign-in state flips (e.g. user signs out
+	// while inside the app), so currently-mounted protected routes redirect.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: auth.isSignedIn is the trigger, not a value used inside the effect.
+	useEffect(() => {
+		router.invalidate();
+	}, [auth.isSignedIn]);
+
+	// Block the router from mounting until Clerk knows the auth state. Otherwise
+	// beforeLoad runs against an unloaded auth context, no-ops, and protected
+	// routes render before the redirect can fire.
+	if (!auth.isLoaded) {
+		return null;
+	}
 	return <RouterProvider router={router} context={{ auth }} />;
 }
 
