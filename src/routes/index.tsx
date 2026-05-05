@@ -1,7 +1,9 @@
+import { requireAuth } from "@/lib/auth-guard";
 import { Container, Text } from "@mantine/core";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
+	beforeLoad: requireAuth,
 	component: HomeComponent,
 });
 

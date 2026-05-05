@@ -28,6 +28,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@clerk/react": "^6.5.0",
     "@mantine/charts": "^9.1.1",
     "@mantine/core": "^9.1.1",
     "@mantine/dates": "^9.1.1",

@@ -53,14 +53,14 @@ The dev server has HMR enabled. Edit anything under `src/` and the browser updat
 
 ### Environment variables
 
-The scaffold has no required env vars. Subsequent stories will introduce:
+Copy `.env.example` to `.env.local` and fill in values for any required variables before running `pnpm dev`.
 
-| Variable | Purpose | Story |
+| Variable | Status | Purpose |
 | --- | --- | --- |
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk frontend key for sign-in flows. | Clerk integration story (under TGF-321) |
-| `VITE_API_BASE_URL` | Griddy API origin. | OpenAPI client integration story |
-| `VITE_SENTRY_DSN` | Sentry DSN for error reporting. | Observability story |
-| `VITE_POSTHOG_KEY` | PostHog API key for product analytics. | Observability story |
+| `VITE_CLERK_PUBLISHABLE_KEY` | **Required** | Clerk publishable key for the configured instance (dev/staging/prod). The app throws at startup if missing. Grab it from the Clerk Dashboard → API Keys. |
+| `VITE_API_BASE_URL` | Planned | Griddy API origin (introduced with the OpenAPI client story). |
+| `VITE_SENTRY_DSN` | Planned | Sentry DSN (introduced with the observability story). |
+| `VITE_POSTHOG_KEY` | Planned | PostHog API key (introduced with the observability story). |
 
 Anything Vite-exposed must be prefixed with `VITE_`. Server-only secrets do not exist in this app — the portal is browser-only and talks to the Griddy API directly.
 

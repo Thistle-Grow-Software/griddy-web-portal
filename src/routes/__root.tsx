@@ -2,8 +2,9 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
 
-import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
+import { Link, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 
+import { Show, UserButton, type useAuth } from "@clerk/react";
 import {
 	AppShell,
 	Burger,
@@ -22,7 +23,9 @@ import { Notifications } from "@mantine/notifications";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-export const Route = createRootRoute({
+type AuthContext = ReturnType<typeof useAuth>;
+
+export const Route = createRootRouteWithContext<{ auth: AuthContext }>()({
 	component: RootComponent,
 	notFoundComponent: NotFoundComponent,
 });
@@ -65,6 +68,14 @@ function RootComponent() {
 							</Group>
 							<Group>
 								<ThemeToggle />
+								<Show when="signed-in">
+									<UserButton />
+								</Show>
+								<Show when="signed-out">
+									<Button component={Link} to="/sign-in" variant="subtle" size="xs">
+										Sign in
+									</Button>
+								</Show>
 							</Group>
 						</Group>
 					</AppShell.Header>
