@@ -1,6 +1,5 @@
 import { configureApiClient } from "@/api/client";
 import { ErrorFallback } from "@/components/ErrorFallback";
-import { identifyUser, initPostHog, resetUser, track } from "@/observability/posthog";
 import { initSentry, setSentryUser } from "@/observability/sentry";
 import { routeTree } from "@/routeTree.gen";
 import { ClerkProvider, useAuth, useClerk } from "@clerk/react";
@@ -9,7 +8,7 @@ import { ErrorBoundary } from "@sentry/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { StrictMode, useEffect, useRef } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "@/index.css";
 
@@ -23,11 +22,6 @@ initSentry({
 	environment: import.meta.env.MODE,
 	release: import.meta.env.VITE_BUILD_SHA,
 	tracesSampleRate: import.meta.env.PROD ? 0.2 : 0,
-});
-
-initPostHog({
-	apiKey: import.meta.env.VITE_POSTHOG_KEY,
-	apiHost: import.meta.env.VITE_POSTHOG_HOST,
 });
 
 const router = createRouter({
@@ -74,26 +68,12 @@ function ApiClientBootstrap() {
 	return null;
 }
 
-function ObservabilityBootstrap() {
+function SentryUserBootstrap() {
 	const auth = useAuth();
-	const previousSignedIn = useRef<boolean | undefined>(undefined);
 
 	useEffect(() => {
 		if (!auth.isLoaded) return;
-
-		if (auth.isSignedIn && auth.userId) {
-			setSentryUser(auth.userId);
-			identifyUser(auth.userId);
-			// Fire only on the signed-out → signed-in transition, not on every reload.
-			if (previousSignedIn.current === false) {
-				track("auth.signed_in");
-			}
-		} else {
-			setSentryUser(null);
-			resetUser();
-		}
-
-		previousSignedIn.current = auth.isSignedIn;
+		setSentryUser(auth.isSignedIn && auth.userId ? auth.userId : null);
 	}, [auth.isLoaded, auth.isSignedIn, auth.userId]);
 
 	return null;
@@ -137,7 +117,7 @@ createRoot(rootElement).render(
 			>
 				<QueryClientProvider client={queryClient}>
 					<ApiClientBootstrap />
-					<ObservabilityBootstrap />
+					<SentryUserBootstrap />
 					<InnerApp />
 					{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
 				</QueryClientProvider>
