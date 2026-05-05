@@ -28,6 +28,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "screenshots": "PLAYWRIGHT_MODE=dev dotenv -e .env.local -- playwright test screenshots --project=chromium",
     "gen:schema": "curl --fail --silent --show-error \"${GRIDDY_API_SCHEMA_URL:?set GRIDDY_API_SCHEMA_URL to the deployed backend schema URL}\" -o src/api/schema.yaml",
     "gen:api": "openapi-ts"
   },
@@ -69,6 +70,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "^3.2.4",
+    "dotenv-cli": "^11.0.0",
     "happy-dom": "^15.11.7",
     "msw": "^2.14.3",
     "typescript": "~5.7.3",

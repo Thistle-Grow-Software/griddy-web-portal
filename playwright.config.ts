@@ -1,10 +1,24 @@
 import { defineConfig, devices } from "@playwright/test";
+import { STORAGE_STATE } from "./e2e/auth-state";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:4173";
+// Two run modes:
+//
+//   - **Smoke / CI** (default): boot the production bundle via `pnpm build &&
+//     pnpm preview` and hit the real artifact. Slower but exercises what
+//     deploys.
+//   - **Screenshot capture** (`PLAYWRIGHT_MODE=dev`): boot `pnpm dev` with
+//     `VITE_E2E_MOCK_API=true` so MSW serves the API in the browser. Fast
+//     boot, no backend needed.
+//
+// `PLAYWRIGHT_BASE_URL` overrides webServer entirely — useful when iterating
+// against an already-running dev server.
+const isDevMode = process.env.PLAYWRIGHT_MODE === "dev";
+const devPort = 5173;
+const previewPort = 4173;
+const baseURL =
+	process.env.PLAYWRIGHT_BASE_URL ??
+	(isDevMode ? `http://localhost:${devPort}` : `http://localhost:${previewPort}`);
 
-// Reuse the user's existing dev/preview server when one is already up
-// (faster local iteration). On CI we always boot a fresh `pnpm preview`
-// against the production bundle so the smoke test exercises real artifacts.
 export default defineConfig({
 	testDir: "./e2e",
 	globalSetup: "./e2e/global-setup.ts",
@@ -19,17 +33,34 @@ export default defineConfig({
 		screenshot: "only-on-failure",
 	},
 	projects: [
+		// One-time auth: signs in via Clerk and writes storage state to disk.
+		// Skipped automatically when a recent state file already exists.
+		{
+			name: "setup",
+			testMatch: /auth\.setup\.ts/,
+		},
 		{
 			name: "chromium",
-			use: { ...devices["Desktop Chrome"] },
+			use: {
+				...devices["Desktop Chrome"],
+				storageState: STORAGE_STATE,
+			},
+			dependencies: ["setup"],
 		},
 	],
 	webServer: process.env.PLAYWRIGHT_BASE_URL
 		? undefined
-		: {
-				command: "pnpm build && pnpm preview --port 4173 --strictPort",
-				url: baseURL,
-				reuseExistingServer: !process.env.CI,
-				timeout: 120_000,
-			},
+		: isDevMode
+			? {
+					command: `VITE_E2E_MOCK_API=true pnpm dev --strictPort --port ${devPort}`,
+					url: baseURL,
+					reuseExistingServer: !process.env.CI,
+					timeout: 120_000,
+				}
+			: {
+					command: `pnpm build && pnpm preview --port ${previewPort} --strictPort`,
+					url: baseURL,
+					reuseExistingServer: !process.env.CI,
+					timeout: 120_000,
+				},
 });
