@@ -1,4 +1,5 @@
 import path from "node:path";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
@@ -17,7 +18,22 @@ export default defineConfig({
 			quoteStyle: "double",
 		}),
 		react(),
+		// Source-map upload to Sentry. No-ops without SENTRY_AUTH_TOKEN, so the
+		// plugin stays inert in local dev and on CI runs where the secret is
+		// absent (e.g. forked-PR runs that can't read repo secrets).
+		sentryVitePlugin({
+			org: process.env.SENTRY_ORG,
+			project: process.env.SENTRY_PROJECT,
+			authToken: process.env.SENTRY_AUTH_TOKEN,
+			disable: !process.env.SENTRY_AUTH_TOKEN,
+			telemetry: false,
+		}),
 	],
+	build: {
+		// Required so the Sentry plugin has source maps to upload. The plugin
+		// deletes them from `dist/` after upload by default in production.
+		sourcemap: true,
+	},
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "src"),

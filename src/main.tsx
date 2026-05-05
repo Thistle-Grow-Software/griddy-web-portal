@@ -1,11 +1,15 @@
 import { configureApiClient } from "@/api/client";
+import { ErrorFallback } from "@/components/ErrorFallback";
+import { identifyUser, initPostHog, resetUser, track } from "@/observability/posthog";
+import { initSentry, setSentryUser } from "@/observability/sentry";
 import { routeTree } from "@/routeTree.gen";
 import { ClerkProvider, useAuth, useClerk } from "@clerk/react";
 import { ColorSchemeScript } from "@mantine/core";
+import { ErrorBoundary } from "@sentry/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { StrictMode, useEffect } from "react";
+import { StrictMode, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import "@/index.css";
 
@@ -13,6 +17,18 @@ const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
 	throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY (see .env.example).");
 }
+
+initSentry({
+	dsn: import.meta.env.VITE_SENTRY_DSN,
+	environment: import.meta.env.MODE,
+	release: import.meta.env.VITE_BUILD_SHA,
+	tracesSampleRate: import.meta.env.PROD ? 0.2 : 0,
+});
+
+initPostHog({
+	apiKey: import.meta.env.VITE_POSTHOG_KEY,
+	apiHost: import.meta.env.VITE_POSTHOG_HOST,
+});
 
 const router = createRouter({
 	routeTree,
@@ -58,6 +74,31 @@ function ApiClientBootstrap() {
 	return null;
 }
 
+function ObservabilityBootstrap() {
+	const auth = useAuth();
+	const previousSignedIn = useRef<boolean | undefined>(undefined);
+
+	useEffect(() => {
+		if (!auth.isLoaded) return;
+
+		if (auth.isSignedIn && auth.userId) {
+			setSentryUser(auth.userId);
+			identifyUser(auth.userId);
+			// Fire only on the signed-out → signed-in transition, not on every reload.
+			if (previousSignedIn.current === false) {
+				track("auth.signed_in");
+			}
+		} else {
+			setSentryUser(null);
+			resetUser();
+		}
+
+		previousSignedIn.current = auth.isSignedIn;
+	}, [auth.isLoaded, auth.isSignedIn, auth.userId]);
+
+	return null;
+}
+
 function InnerApp() {
 	const auth = useAuth();
 	// Re-run beforeLoad guards whenever sign-in state flips (e.g. user signs out
@@ -84,20 +125,23 @@ if (!rootElement) {
 createRoot(rootElement).render(
 	<StrictMode>
 		<ColorSchemeScript defaultColorScheme={"auto"} />
-		<ClerkProvider
-			publishableKey={PUBLISHABLE_KEY}
-			signInUrl="/sign-in"
-			signUpUrl="/sign-up"
-			signInFallbackRedirectUrl="/"
-			signUpFallbackRedirectUrl="/"
-			routerPush={(to) => router.history.push(to)}
-			routerReplace={(to) => router.history.replace(to)}
-		>
-			<QueryClientProvider client={queryClient}>
-				<ApiClientBootstrap />
-				<InnerApp />
-				{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-			</QueryClientProvider>
-		</ClerkProvider>
+		<ErrorBoundary fallback={({ resetError }) => <ErrorFallback resetError={resetError} />}>
+			<ClerkProvider
+				publishableKey={PUBLISHABLE_KEY}
+				signInUrl="/sign-in"
+				signUpUrl="/sign-up"
+				signInFallbackRedirectUrl="/"
+				signUpFallbackRedirectUrl="/"
+				routerPush={(to) => router.history.push(to)}
+				routerReplace={(to) => router.history.replace(to)}
+			>
+				<QueryClientProvider client={queryClient}>
+					<ApiClientBootstrap />
+					<ObservabilityBootstrap />
+					<InnerApp />
+					{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+				</QueryClientProvider>
+			</ClerkProvider>
+		</ErrorBoundary>
 	</StrictMode>,
 );

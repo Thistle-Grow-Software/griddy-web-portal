@@ -58,11 +58,16 @@ Copy `.env.example` to `.env.local` and fill in values for any required variable
 | Variable | Status | Purpose |
 | --- | --- | --- |
 | `VITE_CLERK_PUBLISHABLE_KEY` | **Required** | Clerk publishable key for the configured instance (dev/staging/prod). The app throws at startup if missing. Grab it from the Clerk Dashboard → API Keys. |
+| `VITE_SENTRY_DSN` | Optional | Sentry DSN. SDK no-ops when absent — leave blank locally to avoid spamming Sentry. |
+| `VITE_POSTHOG_KEY` | Optional | PostHog project API key. SDK no-ops when absent. |
+| `VITE_POSTHOG_HOST` | Optional | PostHog ingestion host. Defaults to `https://us.i.posthog.com`. |
 | `VITE_API_BASE_URL` | Planned | Griddy API origin (introduced with the OpenAPI client story). |
-| `VITE_SENTRY_DSN` | Planned | Sentry DSN (introduced with the observability story). |
-| `VITE_POSTHOG_KEY` | Planned | PostHog API key (introduced with the observability story). |
 
-Anything Vite-exposed must be prefixed with `VITE_`. Server-only secrets do not exist in this app — the portal is browser-only and talks to the Griddy API directly.
+Anything Vite-exposed must be prefixed with `VITE_`. Server-only secrets do not exist in this app — the portal is browser-only and talks to the Griddy API directly. CI also reads `SENTRY_AUTH_TOKEN` (Secret), `SENTRY_ORG`, and `SENTRY_PROJECT` (Variables) on the build step to upload source maps; they are never bundled into the client.
+
+### Product analytics event names
+
+Custom events tracked via `posthog-js` follow `domain.action`, lowercase, words separated with underscores. Examples: `auth.signed_in`, `stats.filter_applied`, `video.playback_started`, `team.detail_viewed`. Use the typed `track()` helper in `src/observability/posthog.ts` rather than calling `posthog.capture()` directly — the helper enforces the naming convention via TypeScript's template literal types.
 
 ## Project layout
 
