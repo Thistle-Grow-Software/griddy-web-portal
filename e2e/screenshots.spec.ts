@@ -136,4 +136,86 @@ test.describe("screenshots", () => {
 			fullPage: true,
 		});
 	});
+
+	test("captures /games and /games/$gameId tabs", async ({ page }) => {
+		// Browse — default (all leagues, all seasons, sorted desc by date)
+		await page.goto("/games");
+		await expect(page.getByTestId("game-table")).toBeVisible({ timeout: 15_000 });
+		await expect(page.locator('[data-testid^="game-row-"]').first()).toBeVisible({
+			timeout: 10_000,
+		});
+		await page.screenshot({
+			path: "docs/screenshots/games/games-browse.png",
+			fullPage: true,
+		});
+
+		// Filtered: NFL + Week 1 — exercises league + week filters together.
+		await page.locator("label").filter({ hasText: /^NFL$/ }).first().click();
+		await expect(page.locator('[data-testid^="game-row-"]').first()).toBeVisible({
+			timeout: 10_000,
+		});
+		await page.getByRole("combobox", { name: "Week filter" }).click();
+		await page.getByRole("option", { name: "Week 1" }).click();
+		await expect(page.locator('[data-testid^="game-row-"]').first()).toBeVisible({
+			timeout: 10_000,
+		});
+		await page.screenshot({
+			path: "docs/screenshots/games/games-browse-nfl-w1.png",
+			fullPage: true,
+		});
+
+		// Empty state: filter to a season that doesn't exist in the dataset
+		// (placeholder fixtures cover 2023–2025). Drive it through the URL
+		// since the Select control is constrained to known seasons.
+		await page.goto("/games?league=NFL&season=2020");
+		await expect(page.getByText(/no games match/i)).toBeVisible({ timeout: 10_000 });
+		await page.screenshot({
+			path: "docs/screenshots/games/games-browse-empty.png",
+			fullPage: true,
+		});
+
+		// Detail page — pick the showcase NFL game (season 2025 / week 1, where
+		// the fixture generator emits 150+ plays). The round-robin schedule
+		// chooses the matchup deterministically but it isn't hard-coded here;
+		// fetch the first row's link from the filtered browse view instead.
+		await page.goto("/games?league=NFL&season=2025&week=1");
+		const firstGameLink = page
+			.locator('[data-testid^="game-row-"]')
+			.first()
+			.getByRole("link")
+			.first();
+		await expect(firstGameLink).toBeVisible({ timeout: 10_000 });
+		await firstGameLink.click();
+		await expect(page.getByTestId("game-hero")).toBeVisible({ timeout: 15_000 });
+		// Box Score is the default tab — wait for the team-totals heading.
+		await expect(page.getByText(/team totals/i)).toBeVisible({ timeout: 10_000 });
+		await page.screenshot({
+			path: "docs/screenshots/games/game-detail-box.png",
+			fullPage: true,
+		});
+
+		await page.getByRole("tab", { name: "Play-by-Play" }).click();
+		await expect(page.getByTestId("play-by-play")).toBeVisible({ timeout: 10_000 });
+		await expect(page.locator('[data-testid^="drive-header-"]').first()).toBeVisible();
+		await page.screenshot({
+			path: "docs/screenshots/games/game-detail-pbp.png",
+			fullPage: true,
+		});
+
+		await page.getByRole("tab", { name: "Film" }).click();
+		await expect(page.getByTestId("film-tab-placeholder")).toBeVisible({ timeout: 5_000 });
+		await page.screenshot({
+			path: "docs/screenshots/games/game-detail-film.png",
+			fullPage: true,
+		});
+
+		await page.goto("/games/does-not-exist");
+		await expect(page.getByRole("heading", { name: /Game not found/i })).toBeVisible({
+			timeout: 15_000,
+		});
+		await page.screenshot({
+			path: "docs/screenshots/games/game-detail-404.png",
+			fullPage: true,
+		});
+	});
 });
