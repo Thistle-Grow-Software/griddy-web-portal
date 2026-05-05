@@ -38,8 +38,5 @@ npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 
-# Generated API clients (regenerate from OpenAPI spec on demand)
-src/api/generated/
-
 # Sentry
 .sentryclirc
