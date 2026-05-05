@@ -3,8 +3,17 @@ import { expect, test } from "@playwright/test";
 // Auth comes from the persisted storage state set up by `auth.setup.ts`
 // (configured as a project dependency in playwright.config.ts) — these specs
 // no longer drive the Clerk sign-in flow on every run.
+//
+// These are visual-capture specs, not gates. They depend on the dev server
+// booted with `VITE_E2E_MOCK_API=true` (where MSW serves the mocked data
+// they assert against). In preview/CI mode the production bundle has no
+// backend or MSW, so the specs would fail spuriously — skip them there.
+// `pnpm screenshots` sets `PLAYWRIGHT_MODE=dev` automatically.
+const isDevMode = process.env.PLAYWRIGHT_MODE === "dev";
 
 test.describe("screenshots", () => {
+	test.skip(!isDevMode, "screenshot specs require PLAYWRIGHT_MODE=dev (MSW-backed dev server)");
+
 	test("captures /teams and /teams/$teamId tabs", async ({ page }) => {
 		await page.goto("/teams");
 		await expect(page.getByText("Buffalo Bills").first()).toBeVisible({ timeout: 15_000 });
