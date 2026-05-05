@@ -35,16 +35,12 @@ describe("CI workflow", () => {
 		expect(workflow).toContain("github.head_ref || github.ref_name");
 	});
 
-	it("skips deploy on forked-PR runs (no secret access)", () => {
-		expect(workflow).toContain(
-			"github.event.pull_request.head.repo.full_name == github.repository",
-		);
+	it("deploys only on push events (no PR previews)", () => {
+		expect(workflow).toMatch(/if:\s*>-?\s*\n\s*github\.event_name == 'push'/);
 	});
 
-	it("posts a sticky preview-URL comment on pull requests", () => {
-		expect(workflow).toContain("actions/github-script");
-		expect(workflow).toContain("<!-- griddy-web-portal-preview -->");
-		expect(workflow).toContain("deployment-url");
-		expect(workflow).toContain("github.event_name == 'pull_request'");
+	it("does not post preview-URL comments on pull requests", () => {
+		expect(workflow).not.toContain("actions/github-script");
+		expect(workflow).not.toContain("griddy-web-portal-preview");
 	});
 });
