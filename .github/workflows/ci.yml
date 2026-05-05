@@ -32,6 +32,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify generated API client is in sync with src/api/schema.yaml
+        run: |
+          pnpm gen:api
+          if ! git diff --quiet -- src/api/generated; then
+            echo "::error::src/api/generated is stale. Run 'pnpm gen:api' locally and commit."
+            git diff --stat -- src/api/generated
+            exit 1
+          fi
+
       - name: Lint
         run: pnpm lint
 

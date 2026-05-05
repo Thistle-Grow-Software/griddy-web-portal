@@ -1,0 +1,10 @@
+openapi: 3.1.0
+info:
+  title: Griddy API
+  version: 0.0.0-placeholder
+  description: |
+    Placeholder schema. Replaced by the real DRF OpenAPI schema via
+    `pnpm gen:schema` once the Griddy backend is deployed.
+paths: {}
+components:
+  schemas: {}
