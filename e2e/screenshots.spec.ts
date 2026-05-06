@@ -218,4 +218,57 @@ test.describe("screenshots", () => {
 			fullPage: true,
 		});
 	});
+
+	test("captures /stats query builder states", async ({ page }) => {
+		// Default — Plays entity, no filters, default columns and sort.
+		await page.goto("/stats");
+		await expect(page.getByTestId("results-table")).toBeVisible({ timeout: 15_000 });
+		await expect(page.getByTestId("result-count")).toBeVisible();
+		await page.screenshot({
+			path: "docs/screenshots/stats/stats-plays-default.png",
+			fullPage: true,
+		});
+
+		// Filtered: NFL + 3rd downs only — exercises a select + multiselect
+		// combo, plus the Apply button instead of refetch-on-change.
+		await page.getByLabel("League", { exact: true }).click();
+		await page.getByRole("option", { name: "NFL", exact: true }).click();
+		await page.getByLabel("Down", { exact: true }).click();
+		await page.getByRole("option", { name: "3rd" }).click();
+		// Close the multiselect dropdown by clicking on the page heading.
+		await page.getByRole("heading", { name: "Stats query builder" }).click();
+		await page.getByTestId("apply-button").click();
+		await expect(page.getByTestId("results-table")).toBeVisible();
+		await page.screenshot({
+			path: "docs/screenshots/stats/stats-plays-filtered.png",
+			fullPage: true,
+		});
+
+		// Empty state — combine filters that have no matches.
+		await page.getByLabel("Scoring play only").click();
+		await page.getByLabel("Yards gained min").fill("999");
+		await page.getByTestId("apply-button").click();
+		await expect(page.getByText(/no results/i)).toBeVisible({ timeout: 10_000 });
+		await page.screenshot({
+			path: "docs/screenshots/stats/stats-plays-empty.png",
+			fullPage: true,
+		});
+
+		// Switch entity to Players to show the registry-driven UI changes.
+		await page.goto("/stats?entity=players");
+		await expect(page.getByTestId("results-table")).toBeVisible({ timeout: 15_000 });
+		await page.screenshot({
+			path: "docs/screenshots/stats/stats-players.png",
+			fullPage: true,
+		});
+
+		// Export menu open — show CSV/XLSX choices.
+		await page.getByTestId("export-button").click();
+		await expect(page.getByText("Download CSV")).toBeVisible();
+		await expect(page.getByText("Download Excel (.xlsx)")).toBeVisible();
+		await page.screenshot({
+			path: "docs/screenshots/stats/stats-export-menu.png",
+			fullPage: true,
+		});
+	});
 });

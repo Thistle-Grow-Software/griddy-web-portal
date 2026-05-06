@@ -10,6 +10,7 @@ import {
 import { GAME_STATUSES, type GameStatus } from "@/features/games/types";
 import { PLAYERS, PLAYER_DETAILS, buildGameLogForPlayer } from "@/features/players/fixtures";
 import { POSITIONS, type Position } from "@/features/players/types";
+import { getAllPlays } from "@/features/stats/plays-source";
 import { AVAILABLE_SEASONS, TEAMS, buildScheduleForTeam } from "@/features/teams/fixtures";
 import type { League, TeamSummary } from "@/features/teams/types";
 import { LEAGUES } from "@/features/teams/types";
@@ -244,5 +245,149 @@ export const handlers = [
 			return HttpResponse.json({ detail: "No play-by-play available." }, { status: 409 });
 		}
 		return HttpResponse.json(pbp);
+	}),
+
+	// Stats query — entity-dispatched, dataset-uniform handler. The real DRF
+	// endpoint will replace this; the wire shape is intentionally minimal so
+	// the swap is mostly s/MSW/real fetch.
+	http.get(`${API_BASE}/api/stats/query/`, ({ request }) => {
+		const url = new URL(request.url);
+		const startedAt = (
+			typeof performance !== "undefined" ? performance.now() : Date.now()
+		) as number;
+		const entity = url.searchParams.get("entity") ?? "plays";
+		const sortId = url.searchParams.get("sort") ?? "";
+		const dir = (url.searchParams.get("dir") ?? "desc") === "asc" ? "asc" : "desc";
+		const page = Math.max(1, Number(url.searchParams.get("page") ?? "1"));
+		const pageSize = Math.max(
+			1,
+			Math.min(5000, Number(url.searchParams.get("page_size") ?? "200")),
+		);
+
+		let rows: Record<string, unknown>[] = [];
+
+		if (entity === "plays") {
+			const leagueParam = url.searchParams.get("league");
+			const seasonParam = url.searchParams.get("season");
+			const teamParam = url.searchParams.get("team");
+			const downs = url.searchParams.getAll("down");
+			const results = url.searchParams.getAll("result");
+			const yardsMin = url.searchParams.get("yards_min");
+			const yardsMax = url.searchParams.get("yards_max");
+			const scoring = url.searchParams.get("scoring") === "true";
+
+			rows = getAllPlays().filter((p) => {
+				if (leagueParam && p.league !== leagueParam) return false;
+				if (seasonParam && p.season !== Number(seasonParam)) return false;
+				if (teamParam && p.possessionTeamId !== teamParam) return false;
+				if (downs.length > 0 && (p.down === null || !downs.includes(String(p.down)))) return false;
+				if (results.length > 0 && !results.includes(p.result)) return false;
+				if (yardsMin !== null && (p.yards === null || p.yards < Number(yardsMin))) return false;
+				if (yardsMax !== null && (p.yards === null || p.yards > Number(yardsMax))) return false;
+				if (scoring && !p.scoringPlay) return false;
+				return true;
+			});
+		} else if (entity === "players") {
+			const leagueParam = url.searchParams.get("league");
+			const positions = url.searchParams.getAll("position");
+			const active = url.searchParams.get("active") === "true";
+			const q = url.searchParams.get("q")?.toLowerCase() ?? "";
+			rows = PLAYERS.filter((p) => {
+				if (leagueParam && p.league !== leagueParam) return false;
+				if (positions.length > 0 && !positions.includes(p.position)) return false;
+				if (active && !p.active) return false;
+				if (q && !p.name.toLowerCase().includes(q)) return false;
+				return true;
+			}).map((p) => ({
+				id: p.id,
+				name: p.name,
+				position: p.position,
+				league: p.league,
+				teamId: p.teamId,
+				teamName: p.teamName,
+				active: p.active,
+				currentSeason: p.currentSeason,
+				passYards: p.keyStats.passYards ?? null,
+				passTds: p.keyStats.passTds ?? null,
+				rushYards: p.keyStats.rushYards ?? null,
+				rushTds: p.keyStats.rushTds ?? null,
+				receptions: p.keyStats.receptions ?? null,
+				recYards: p.keyStats.recYards ?? null,
+				tackles: p.keyStats.tackles ?? null,
+				sacks: p.keyStats.sacks ?? null,
+			}));
+		} else if (entity === "teams") {
+			const leagueParam = url.searchParams.get("league");
+			const seasonParam = url.searchParams.get("season");
+			const q = url.searchParams.get("q")?.toLowerCase() ?? "";
+			rows = TEAMS.filter((t) => {
+				if (leagueParam && t.league !== leagueParam) return false;
+				if (seasonParam && t.currentSeason !== Number(seasonParam)) return false;
+				if (q && !`${t.location} ${t.name}`.toLowerCase().includes(q)) return false;
+				return true;
+			}).map((t) => ({
+				id: t.id,
+				displayName: `${t.location} ${t.name}`,
+				league: t.league,
+				wins: t.record.wins,
+				losses: t.record.losses,
+				ties: t.record.ties,
+				currentSeason: t.currentSeason,
+			}));
+		} else if (entity === "games") {
+			const leagueParam = url.searchParams.get("league");
+			const seasonParam = url.searchParams.get("season");
+			const weekParam = url.searchParams.get("week");
+			const statuses = url.searchParams.getAll("status");
+			const teamParam = url.searchParams.get("team");
+			rows = GAMES.filter((g) => {
+				if (leagueParam && g.league !== leagueParam) return false;
+				if (seasonParam && g.season !== Number(seasonParam)) return false;
+				if (weekParam && g.week !== Number(weekParam)) return false;
+				if (statuses.length > 0 && !statuses.includes(g.status)) return false;
+				if (teamParam && g.homeTeamId !== teamParam && g.awayTeamId !== teamParam) return false;
+				return true;
+			}).map((g) => ({
+				id: g.id,
+				date: g.date,
+				league: g.league,
+				week: g.week,
+				matchup: `${g.awayTeamName} @ ${g.homeTeamName}`,
+				score:
+					g.awayScore === null || g.homeScore === null ? null : `${g.awayScore} – ${g.homeScore}`,
+				status: g.status,
+			}));
+		}
+
+		// Generic comparator using the requested sort key. Strings sort
+		// case-insensitively; numbers numerically; nulls go last.
+		if (sortId) {
+			const sign = dir === "asc" ? 1 : -1;
+			rows = rows.slice().sort((a, b) => {
+				const av = a[sortId];
+				const bv = b[sortId];
+				if (av === bv) return 0;
+				if (av === null || av === undefined) return 1;
+				if (bv === null || bv === undefined) return -1;
+				if (typeof av === "number" && typeof bv === "number") return (av - bv) * sign;
+				return String(av).localeCompare(String(bv)) * sign;
+			});
+		}
+
+		const count = rows.length;
+		const start = (page - 1) * pageSize;
+		const pageItems = rows.slice(start, start + pageSize);
+		const queryMs = Math.round(
+			((typeof performance !== "undefined" ? performance.now() : Date.now()) as number) - startedAt,
+		);
+
+		return HttpResponse.json({
+			entity,
+			count,
+			page,
+			pageSize,
+			results: pageItems,
+			queryMs,
+		});
 	}),
 ];
