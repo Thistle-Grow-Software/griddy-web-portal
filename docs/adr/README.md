@@ -30,6 +30,7 @@ has become a design document and should be split.
 | 0005 | [Data layer — TanStack Query + generated OpenAPI client](0005-data-layer-tanstack-query-openapi.md) | Accepted |
 | 0006 | [Authentication provider — Clerk](0006-auth-provider-clerk.md) | Accepted |
 | 0007 | [Tooling baseline — pnpm + Biome + Vitest + Playwright](0007-tooling-baseline.md) | Accepted |
+| 0008 | [v1 game-film delivery — R2 + Worker-gated HLS](0008-v1-video-delivery-r2-worker-hls.md) | Proposed |
 
 ## Out of scope for the initial set
 
