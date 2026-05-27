@@ -69,6 +69,14 @@ a **one-time batch remux**. Concretely:
   (ADR-0002), so no new account or operational surface — but it is the
   first server-side code the project owns, and needs its own deploy and
   logging story.
+* **The v1 PoC validates this design locally, at zero cloud spend.** The
+  Worker runs under `wrangler dev` against Miniflare's local R2 simulation,
+  and the packaging pipeline writes to that local store — so the auth gate,
+  signed cookie, CORS, and range/scrubbing behavior are exercised exactly
+  as in production while provisioning nothing in Cloudflare. Promoting to
+  real R2 (and the custom video origin) is a binding/config change, not a
+  code change. This also keeps the apex-domain dependency off the PoC's
+  critical path.
 * **Auth stays single-sourced.** Entitlement decisions live in Django
   against the existing Clerk JWTs; the Worker only verifies a token Django
   minted. No second identity surface.
