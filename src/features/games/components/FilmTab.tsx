@@ -1,19 +1,80 @@
-import { Center, Stack, Text, Title } from "@mantine/core";
-import { IconVideo } from "@tabler/icons-react";
+import { EmptyState } from "@/features/teams/components/EmptyState";
+import { track } from "@/observability/analytics";
+import { useAuth } from "@clerk/react";
+import { Alert, Skeleton, Stack } from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { useGamePlayback } from "../hooks";
+import type { FilmPlayerEvent } from "./GameFilmPlayer";
+import { GameFilmPlayer } from "./GameFilmPlayer";
 
-// Placeholder until TGF-335 (video delivery spike) lands. Kept as a real tab
-// rather than a hidden one so the URL/UI structure doesn't shift when video
-// becomes available — only the contents of this panel will change.
-export function FilmTab() {
+// Game film for the detail page (TGF-335). Fetches a gated HLS manifest URL
+// (ADR-0008) and renders the player, falling back to an empty state when the
+// game predates the v1 catalog (the API answers 404) and an alert on real
+// failures. The player's structured events are forwarded to PostHog via the
+// analytics shim (TGF-329).
+export function FilmTab({ gameId, active }: { gameId: string; active: boolean }) {
+	const { userId } = useAuth();
+	const query = useGamePlayback(gameId, active);
+
+	if (query.isLoading) {
+		return <Skeleton height={420} radius="md" data-testid="film-skeleton" />;
+	}
+
+	if (query.isError) {
+		const status = (query.error as { status?: number }).status;
+		if (status === 404) {
+			return (
+				<EmptyState
+					title="No film available for this game"
+					description="This game predates the available film catalog. Check back as we expand coverage."
+				/>
+			);
+		}
+		return (
+			<Alert color="red" icon={<IconAlertCircle size={16} />} title="Couldn't load film">
+				{(query.error as Error).message}
+			</Alert>
+		);
+	}
+
+	const playback = query.data;
+	if (!playback) {
+		return (
+			<EmptyState
+				title="No film available for this game"
+				description="This game predates the available film catalog. Check back as we expand coverage."
+			/>
+		);
+	}
+
+	const handleEvent = (event: FilmPlayerEvent) => {
+		switch (event.type) {
+			case "playback_started":
+				track("video.playback_started", { gameId });
+				break;
+			case "playback_completed":
+				track("video.playback_completed", { gameId });
+				break;
+			case "playback_error":
+				track("video.playback_error", { gameId, message: event.message, fatal: event.fatal });
+				break;
+			default:
+				// playback_progress is high-frequency; not forwarded in v1.
+				break;
+		}
+	};
+
 	return (
-		<Center mih={240} p="md" data-testid="film-tab-placeholder">
-			<Stack align="center" gap="xs" maw={420}>
-				<IconVideo size={36} />
-				<Title order={4}>Film coming soon</Title>
-				<Text c="dimmed" ta="center" size="sm">
-					Game film playback is being worked on under TGF-335. Check back once that ships.
-				</Text>
-			</Stack>
-		</Center>
+		<Stack gap="xs" data-testid="film-tab">
+			<GameFilmPlayer
+				src={playback.manifestUrl}
+				poster={playback.poster ?? undefined}
+				title="Game film"
+				onEvent={handleEvent}
+				// Scope resume to user + game so positions don't bleed across users
+				// sharing a browser. Anonymous sessions fall back to game-only.
+				storageKey={`griddy:film-pos:${userId ?? "anon"}:${gameId}`}
+			/>
+		</Stack>
 	);
 }

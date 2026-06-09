@@ -202,10 +202,38 @@ test.describe("screenshots", () => {
 			fullPage: true,
 		});
 
+		// Film tab — TGF-335. The showcase game (final, season ≥ 2024) has film,
+		// so the player loads the local sample HLS manifest. Wait for the control
+		// bar to confirm the player mounted before capturing.
 		await page.getByRole("tab", { name: "Film" }).click();
-		await expect(page.getByTestId("film-tab-placeholder")).toBeVisible({ timeout: 5_000 });
+		await expect(page.getByTestId("film-player")).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByTestId("film-controls")).toBeVisible({ timeout: 10_000 });
+		await page.waitForTimeout(750); // let the poster/first frame paint
 		await page.screenshot({
 			path: "docs/screenshots/games/game-detail-film.png",
+			fullPage: true,
+		});
+
+		// (The fatal-error overlay can't be reliably forced here — MSW's service
+		// worker serves same-origin requests, so Playwright's network routing
+		// can't 404 the manifest. That path is covered by GameFilmPlayer's unit
+		// tests instead.)
+
+		// No film available — a game that predates the catalog (season 2023) hides
+		// the Film tab entirely. Capture the detail page without it.
+		await page.goto("/games?league=NFL&season=2023&week=1");
+		const oldGameLink = page
+			.locator('[data-testid^="game-row-"]')
+			.first()
+			.getByRole("link")
+			.first();
+		await expect(oldGameLink).toBeVisible({ timeout: 10_000 });
+		await oldGameLink.click();
+		await expect(page.getByTestId("game-hero")).toBeVisible({ timeout: 15_000 });
+		await expect(page.getByRole("tab", { name: "Box Score" })).toBeVisible();
+		await expect(page.getByRole("tab", { name: "Film" })).toHaveCount(0);
+		await page.screenshot({
+			path: "docs/screenshots/games/game-detail-no-film.png",
 			fullPage: true,
 		});
 

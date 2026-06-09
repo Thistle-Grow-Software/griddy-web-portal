@@ -9,6 +9,7 @@ import type {
 	Drive,
 	DriveOutcome,
 	GameDetail,
+	GamePlayback,
 	GameStatus,
 	GameSummary,
 	Play,
@@ -376,4 +377,36 @@ export function buildPlayByPlay(gameId: string): { gameId: string; drives: Drive
 function isFeatured(id: string): boolean {
 	// First game per league at season 2025, week 1 — the "showcase" game.
 	return /-2025-w01-/.test(id);
+}
+
+// ---- Film playback (TGF-335 / ADR-0008) ----
+
+// Self-contained sample HLS asset served from public/. The PoC stays local —
+// no R2/Worker provisioning — so the player exercises the real hls.js path at
+// zero cloud spend. Production swaps this for a Worker-gated manifest URL minted
+// by Django; the wire shape (GamePlayback) is identical.
+const SAMPLE_MANIFEST = "/sample/film/sample.m3u8";
+const SAMPLE_POSTER = "/sample/film/poster.jpg";
+
+/**
+ * Whether a game has film in the v1 catalog. The catalog covers completed games
+ * from 2024 onward; earlier seasons and not-yet-final games "predate the
+ * available catalog" and surface the empty state.
+ */
+export function hasFilm(gameId: string): boolean {
+	const game = GAME_DETAILS.get(gameId);
+	if (!game) return false;
+	return game.status === "final" && game.season >= 2024;
+}
+
+export function buildPlayback(gameId: string): GamePlayback | null {
+	if (!hasFilm(gameId)) return null;
+	return {
+		manifestUrl: SAMPLE_MANIFEST,
+		// Stand-in for the short-lived, game-scoped token Django mints in prod.
+		token: `dev-token-${gameId}`,
+		// Fixed far-future stamp keeps fixtures deterministic (no clock reads).
+		expiresAt: "2099-01-01T00:00:00.000Z",
+		poster: SAMPLE_POSTER,
+	};
 }

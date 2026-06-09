@@ -50,6 +50,7 @@
     "@tanstack/react-virtual": "^3.13.24",
     "@tanstack/router-plugin": "^1.167.28",
     "dayjs": "^1.11.20",
+    "hls.js": "^1.6.16",
     "postcss": "^8.5.12",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",

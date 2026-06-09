@@ -1,5 +1,11 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { fetchGameBoxScore, fetchGameDetail, fetchGamePlayByPlay, fetchGamesList } from "./api";
+import {
+	fetchGameBoxScore,
+	fetchGameDetail,
+	fetchGamePlayByPlay,
+	fetchGamePlayback,
+	fetchGamesList,
+} from "./api";
 import type { GameListParams } from "./types";
 
 export const gamesKeys = {
@@ -8,6 +14,7 @@ export const gamesKeys = {
 	detail: (id: string) => ["games", "detail", id] as const,
 	boxScore: (id: string) => ["games", "boxScore", id] as const,
 	playByPlay: (id: string) => ["games", "playByPlay", id] as const,
+	playback: (id: string) => ["games", "playback", id] as const,
 };
 
 export function useGamesList(params: GameListParams) {
@@ -43,5 +50,18 @@ export function useGamePlayByPlay(gameId: string, enabled = true) {
 		queryKey: gamesKeys.playByPlay(gameId),
 		queryFn: ({ signal }) => fetchGamePlayByPlay(gameId, signal),
 		enabled: Boolean(gameId) && enabled,
+	});
+}
+
+export function useGamePlayback(gameId: string, enabled = true) {
+	return useQuery({
+		queryKey: gamesKeys.playback(gameId),
+		queryFn: ({ signal }) => fetchGamePlayback(gameId, signal),
+		enabled: Boolean(gameId) && enabled,
+		// A 404 means "no film for this game" — a terminal state, not a flake.
+		retry: (failureCount, error) => {
+			if ((error as { status?: number }).status === 404) return false;
+			return failureCount < 2;
+		},
 	});
 }

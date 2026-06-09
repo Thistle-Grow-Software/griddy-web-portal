@@ -1,4 +1,11 @@
-import type { BoxScore, GameDetail, GameListParams, GameListResponse, PlayByPlay } from "./types";
+import type {
+	BoxScore,
+	GameDetail,
+	GameListParams,
+	GameListResponse,
+	GamePlayback,
+	PlayByPlay,
+} from "./types";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000").replace(/\/+$/, "");
 
@@ -48,6 +55,10 @@ export function fetchGameBoxScore(gameId: string, signal?: AbortSignal): Promise
 
 export function fetchGamePlayByPlay(gameId: string, signal?: AbortSignal): Promise<PlayByPlay> {
 	return getJson<PlayByPlay>(`/api/games/${encodeURIComponent(gameId)}/play-by-play/`, signal);
+}
+
+export function fetchGamePlayback(gameId: string, signal?: AbortSignal): Promise<GamePlayback> {
+	return getJson<GamePlayback>(`/api/games/${encodeURIComponent(gameId)}/playback/`, signal);
 }
 
 export const _internal = { buildGamesListPath };

@@ -2,7 +2,7 @@ import { BoxScoreTab } from "@/features/games/components/BoxScoreTab";
 import { FilmTab } from "@/features/games/components/FilmTab";
 import { GameHero, GameHeroSkeleton } from "@/features/games/components/GameHero";
 import { PlayByPlayTab } from "@/features/games/components/PlayByPlayTab";
-import { useGameDetail } from "@/features/games/hooks";
+import { useGameDetail, useGamePlayback } from "@/features/games/hooks";
 import { EmptyState } from "@/features/teams/components/EmptyState";
 import { Alert, Button, Stack, Tabs } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
@@ -31,6 +31,17 @@ function GameDetail() {
 	const navigate = Route.useNavigate();
 
 	const detailQuery = useGameDetail(gameId);
+
+	// Resolve film availability up front so the Film tab can be hidden when the
+	// game predates the catalog (TGF-335). The API answers 404 for no-film
+	// games; while the query is in flight we keep the tab so it doesn't flicker
+	// out for games that do have film. FilmTab re-reads the same cached query.
+	const playbackQuery = useGamePlayback(gameId);
+	const filmUnavailable =
+		playbackQuery.isError && (playbackQuery.error as { status?: number }).status === 404;
+	const showFilmTab = !filmUnavailable;
+	// A deep link to ?tab=film on a no-film game falls back to the box score.
+	const effectiveTab: TabValue = tab === "film" && !showFilmTab ? "box" : tab;
 
 	if (detailQuery.isLoading) {
 		return (
@@ -73,7 +84,7 @@ function GameDetail() {
 				</Button>
 			</Link>
 			<Tabs
-				value={tab}
+				value={effectiveTab}
 				onChange={(value) => {
 					if (isTabValue(value)) {
 						navigate({ search: (prev) => ({ ...prev, tab: value }) });
@@ -84,18 +95,20 @@ function GameDetail() {
 				<Tabs.List>
 					<Tabs.Tab value="box">Box Score</Tabs.Tab>
 					<Tabs.Tab value="pbp">Play-by-Play</Tabs.Tab>
-					<Tabs.Tab value="film">Film</Tabs.Tab>
+					{showFilmTab ? <Tabs.Tab value="film">Film</Tabs.Tab> : null}
 				</Tabs.List>
 
 				<Tabs.Panel value="box" pt="md">
-					<BoxScoreTab gameId={gameId} active={tab === "box"} />
+					<BoxScoreTab gameId={gameId} active={effectiveTab === "box"} />
 				</Tabs.Panel>
 				<Tabs.Panel value="pbp" pt="md">
-					<PlayByPlayTab gameId={gameId} active={tab === "pbp"} />
+					<PlayByPlayTab gameId={gameId} active={effectiveTab === "pbp"} />
 				</Tabs.Panel>
-				<Tabs.Panel value="film" pt="md">
-					<FilmTab />
-				</Tabs.Panel>
+				{showFilmTab ? (
+					<Tabs.Panel value="film" pt="md">
+						<FilmTab gameId={gameId} active={effectiveTab === "film"} />
+					</Tabs.Panel>
+				) : null}
 			</Tabs>
 		</Stack>
 	);
