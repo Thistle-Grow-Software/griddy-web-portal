@@ -1,5 +1,5 @@
-import { EmptyState } from "@/features/teams/components/EmptyState";
-import { Center, Group, Loader, Select, Stack, Table } from "@mantine/core";
+import { EmptyState, InlineError, TableSkeleton } from "@/components/states";
+import { Group, Select, Stack, Table } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { usePlayerCareer, usePlayerGameLog } from "../hooks";
@@ -91,13 +91,11 @@ export function GameLogTab({
 			</Group>
 
 			{gameLogQuery.isLoading ? (
-				<Center mih={120}>
-					<Loader size="sm" />
-				</Center>
+				<TableSkeleton rows={8} data-testid="game-log-skeleton" />
 			) : gameLogQuery.isError ? (
-				<EmptyState
+				<InlineError
 					title="Couldn't load game log"
-					description={(gameLogQuery.error as Error).message}
+					message={(gameLogQuery.error as Error).message}
 				/>
 			) : !gameLogQuery.data || gameLogQuery.data.length === 0 ? (
 				<EmptyState title={`No games on file for ${season}`} />

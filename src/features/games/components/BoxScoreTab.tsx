@@ -1,5 +1,5 @@
-import { Alert, Skeleton, Stack, Table, Text, Title } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { EmptyState, TableSkeleton } from "@/components/states";
+import { Stack, Table, Text, Title } from "@mantine/core";
 import { useGameBoxScore } from "../hooks";
 import type { BoxScorePlayerLine, BoxScoreSide } from "../types";
 
@@ -141,13 +141,14 @@ export function BoxScoreTab({ gameId, active }: { gameId: string; active: boolea
 	const query = useGameBoxScore(gameId, active);
 
 	if (query.isLoading) {
-		return <Skeleton height={400} radius="sm" data-testid="box-score-skeleton" />;
+		return <TableSkeleton rows={8} data-testid="box-score-skeleton" />;
 	}
 	if (query.isError) {
 		return (
-			<Alert color="yellow" icon={<IconAlertCircle size={16} />} title="No box score available">
-				This game hasn't started, or the box score isn't ready yet.
-			</Alert>
+			<EmptyState
+				title="No box score available"
+				description="This game hasn't started, or the box score isn't ready yet."
+			/>
 		);
 	}
 	if (!query.data) return null;

@@ -1,11 +1,10 @@
-import { EmptyState } from "@/features/teams/components/EmptyState";
+import { EmptyState, InlineError } from "@/components/states";
 import { RosterTab } from "@/features/teams/components/RosterTab";
 import { ScheduleTab } from "@/features/teams/components/ScheduleTab";
 import { StatsTab } from "@/features/teams/components/StatsTab";
 import { TeamHero, TeamHeroSkeleton } from "@/features/teams/components/TeamHero";
 import { useTeamDetail } from "@/features/teams/hooks";
-import { Alert, Button, Stack, Tabs } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { Button, Stack, Tabs } from "@mantine/core";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 const TABS = ["roster", "schedule", "stats"] as const;
@@ -55,9 +54,11 @@ function TeamDetail() {
 			);
 		}
 		return (
-			<Alert color="red" icon={<IconAlertCircle size={16} />} title="Couldn't load team">
-				{(detailQuery.error as Error).message}
-			</Alert>
+			<InlineError
+				title="Couldn't load team"
+				message={(detailQuery.error as Error).message}
+				onRetry={() => detailQuery.refetch()}
+			/>
 		);
 	}
 

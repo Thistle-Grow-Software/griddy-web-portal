@@ -1,8 +1,8 @@
-import { Badge, Card, Center, Group, Loader, Stack, Text } from "@mantine/core";
+import { CardSkeleton, EmptyState, InlineError } from "@/components/states";
+import { Badge, Card, Group, Stack, Text } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { useTeamSchedule } from "../hooks";
 import type { ScheduleGame } from "../types";
-import { EmptyState } from "./EmptyState";
 
 function formatGameDate(iso: string): string {
 	const d = new Date(iso);
@@ -31,13 +31,15 @@ export function ScheduleTab({ teamId, active }: { teamId: string; active: boolea
 
 	if (isLoading) {
 		return (
-			<Center mih={120}>
-				<Loader size="sm" />
-			</Center>
+			<Stack gap="xs" data-testid="schedule-skeleton">
+				{["s1", "s2", "s3", "s4"].map((key) => (
+					<CardSkeleton key={key} />
+				))}
+			</Stack>
 		);
 	}
 	if (isError) {
-		return <EmptyState title="Couldn't load schedule" description={(error as Error).message} />;
+		return <InlineError title="Couldn't load schedule" message={(error as Error).message} />;
 	}
 	if (!data || data.length === 0) {
 		return <EmptyState title="No games on the schedule yet" />;

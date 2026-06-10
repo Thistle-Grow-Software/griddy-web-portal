@@ -5,42 +5,21 @@ import "@mantine/dates/styles.css";
 import { Link, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 
 import { Show, UserButton, type useAuth } from "@clerk/react";
-import {
-	AppShell,
-	Burger,
-	Button,
-	Group,
-	MantineProvider,
-	NavLink,
-	Stack,
-	Text,
-	Title,
-} from "@mantine/core";
+import { AppShell, Burger, Button, Group, MantineProvider, NavLink, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotFound } from "@/components/states";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 type AuthContext = ReturnType<typeof useAuth>;
 
 export const Route = createRootRouteWithContext<{ auth: AuthContext }>()({
 	component: RootComponent,
-	notFoundComponent: NotFoundComponent,
+	notFoundComponent: () => <NotFound />,
 });
-
-function NotFoundComponent() {
-	return (
-		<Stack align="center" gap="md" mt="xl">
-			<Title order={1}>404</Title>
-			<Text c="dimmed">We couldn't find that page.</Text>
-			<Button component={Link} to="/">
-				Back to home
-			</Button>
-		</Stack>
-	);
-}
 
 function RootComponent() {
 	const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();

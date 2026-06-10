@@ -1,4 +1,4 @@
-import { EmptyState } from "@/features/teams/components/EmptyState";
+import { EmptyState } from "@/components/states";
 import { Card, SimpleGrid, Stack, Text } from "@mantine/core";
 import type { PlayerBio } from "../types";
 

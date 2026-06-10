@@ -1,10 +1,9 @@
 import { configureApiClient } from "@/api/client";
-import { ErrorFallback } from "@/components/ErrorFallback";
+import { ErrorBoundary } from "@/components/states";
 import { initSentry, setSentryUser } from "@/observability/sentry";
 import { routeTree } from "@/routeTree.gen";
 import { ClerkProvider, useAuth, useClerk } from "@clerk/react";
 import { ColorSchemeScript } from "@mantine/core";
-import { ErrorBoundary } from "@sentry/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
@@ -117,7 +116,7 @@ async function bootstrap(): Promise<void> {
 	createRoot(rootElement as HTMLElement).render(
 		<StrictMode>
 			<ColorSchemeScript defaultColorScheme={"auto"} />
-			<ErrorBoundary fallback={({ resetError }) => <ErrorFallback resetError={resetError} />}>
+			<ErrorBoundary fullPage>
 				<ClerkProvider
 					publishableKey={PUBLISHABLE_KEY}
 					signInUrl="/sign-in"

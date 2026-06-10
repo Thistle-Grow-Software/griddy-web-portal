@@ -1,8 +1,7 @@
-import { EmptyState } from "@/features/teams/components/EmptyState";
+import { EmptyState, InlineError } from "@/components/states";
 import { track } from "@/observability/analytics";
 import { useAuth } from "@clerk/react";
-import { Alert, Skeleton, Stack } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { Skeleton, Stack } from "@mantine/core";
 import { useGamePlayback } from "../hooks";
 import type { FilmPlayerEvent } from "./GameFilmPlayer";
 import { GameFilmPlayer } from "./GameFilmPlayer";
@@ -30,11 +29,7 @@ export function FilmTab({ gameId, active }: { gameId: string; active: boolean })
 				/>
 			);
 		}
-		return (
-			<Alert color="red" icon={<IconAlertCircle size={16} />} title="Couldn't load film">
-				{(query.error as Error).message}
-			</Alert>
-		);
+		return <InlineError title="Couldn't load film" message={(query.error as Error).message} />;
 	}
 
 	const playback = query.data;

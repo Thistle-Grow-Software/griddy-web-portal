@@ -1,3 +1,4 @@
+import { EmptyState, InlineError, TableSkeleton } from "@/components/states";
 import { ColumnPicker } from "@/features/stats/components/ColumnPicker";
 import { EntitySelector } from "@/features/stats/components/EntitySelector";
 import { ExportButton } from "@/features/stats/components/ExportButton";
@@ -8,11 +9,10 @@ import { downloadCsv, downloadXlsx } from "@/features/stats/export";
 import { useStatsQuery } from "@/features/stats/hooks";
 import { REGISTRY } from "@/features/stats/registry";
 import { ENTITIES, type Entity, type FilterValues } from "@/features/stats/types";
-import { EmptyState } from "@/features/teams/components/EmptyState";
 import { requireAuth } from "@/lib/auth-guard";
 import { track } from "@/observability/analytics";
-import { Alert, Badge, Button, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
-import { IconAlertCircle, IconBolt } from "@tabler/icons-react";
+import { Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
+import { IconBolt } from "@tabler/icons-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -174,11 +174,13 @@ function StatsRoute() {
 			</Group>
 
 			{query.isError ? (
-				<Alert color="red" icon={<IconAlertCircle size={16} />} title="Query failed">
-					{(query.error as Error).message}
-				</Alert>
+				<InlineError
+					title="Query failed"
+					message={(query.error as Error).message}
+					onRetry={() => query.refetch()}
+				/>
 			) : query.isLoading ? (
-				<Skeleton height={600} radius="sm" data-testid="results-skeleton" />
+				<TableSkeleton rows={12} data-testid="results-skeleton" />
 			) : rows.length === 0 ? (
 				<EmptyState
 					title="No results"

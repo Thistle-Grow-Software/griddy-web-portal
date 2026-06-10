@@ -1,11 +1,10 @@
+import { EmptyState, InlineError } from "@/components/states";
 import { BoxScoreTab } from "@/features/games/components/BoxScoreTab";
 import { FilmTab } from "@/features/games/components/FilmTab";
 import { GameHero, GameHeroSkeleton } from "@/features/games/components/GameHero";
 import { PlayByPlayTab } from "@/features/games/components/PlayByPlayTab";
 import { useGameDetail, useGamePlayback } from "@/features/games/hooks";
-import { EmptyState } from "@/features/teams/components/EmptyState";
-import { Alert, Button, Stack, Tabs } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { Button, Stack, Tabs } from "@mantine/core";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 const TABS = ["box", "pbp", "film"] as const;
@@ -66,9 +65,11 @@ function GameDetail() {
 			);
 		}
 		return (
-			<Alert color="red" icon={<IconAlertCircle size={16} />} title="Couldn't load game">
-				{(detailQuery.error as Error).message}
-			</Alert>
+			<InlineError
+				title="Couldn't load game"
+				message={(detailQuery.error as Error).message}
+				onRetry={() => detailQuery.refetch()}
+			/>
 		);
 	}
 
