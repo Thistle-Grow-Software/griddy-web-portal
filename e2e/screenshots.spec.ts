@@ -274,12 +274,14 @@ test.describe("screenshots", () => {
 		await statesSection.screenshot({
 			path: "docs/screenshots/states/error-boundary-fallback.png",
 		});
-		await page.getByRole("button", { name: "Try again" }).click();
+		// The InlineError demo above also has a "Try again" button; the boundary
+		// fallback's is the later one in DOM order.
+		await page.getByRole("button", { name: "Try again" }).last().click();
 		await expect(page.getByRole("button", { name: "Throw test error" })).toBeVisible();
 
 		// Router-level 404 via the shared NotFound surface.
 		await page.goto("/this-page-does-not-exist");
-		await expect(page.getByText("404")).toBeVisible({ timeout: 15_000 });
+		await expect(page.getByRole("heading", { name: "404" })).toBeVisible({ timeout: 15_000 });
 		await page.screenshot({
 			path: "docs/screenshots/states/not-found-404.png",
 			fullPage: true,
