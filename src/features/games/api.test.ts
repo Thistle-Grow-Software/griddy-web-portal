@@ -7,6 +7,7 @@ import {
 	fetchGameBoxScore,
 	fetchGameDetail,
 	fetchGamePlayByPlay,
+	fetchGamePlayback,
 	fetchGamesList,
 } from "./api";
 
@@ -93,5 +94,35 @@ describe("games API (against MSW)", () => {
 		const pbp = await fetchGamePlayByPlay(id);
 		const totalPlays = pbp.drives.reduce((sum, d) => sum + d.plays.length, 0);
 		expect(totalPlays).toBeGreaterThanOrEqual(150);
+	});
+
+	it("fetchGamePlayback returns an HLS manifest + token for a final 2024+ game", async () => {
+		const list = await fetchGamesList({
+			league: "NFL",
+			season: 2024,
+			status: "final",
+			pageSize: 1,
+		});
+		const id = list.results[0].id;
+		const playback = await fetchGamePlayback(id);
+		expect(playback.manifestUrl).toMatch(/\.m3u8$/);
+		expect(playback.token).toBeTruthy();
+		expect(playback.poster).toBeTruthy();
+	});
+
+	it("fetchGamePlayback 404s for games that predate the film catalog (2023)", async () => {
+		// The v1 catalog starts at 2024; 2023 games have no film.
+		const list = await fetchGamesList({
+			league: "NFL",
+			season: 2023,
+			status: "final",
+			pageSize: 1,
+		});
+		const id = list.results[0].id;
+		await expect(fetchGamePlayback(id)).rejects.toMatchObject({ status: 404 });
+	});
+
+	it("fetchGamePlayback 404s for an unknown game id", async () => {
+		await expect(fetchGamePlayback("does-not-exist")).rejects.toMatchObject({ status: 404 });
 	});
 });

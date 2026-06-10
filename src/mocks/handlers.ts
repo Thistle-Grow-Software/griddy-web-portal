@@ -5,6 +5,7 @@ import {
 	GAME_DETAILS,
 	buildBoxScore,
 	buildPlayByPlay,
+	buildPlayback,
 	summarize as summarizeGame,
 } from "@/features/games/fixtures";
 import { GAME_STATUSES, type GameStatus } from "@/features/games/types";
@@ -245,6 +246,20 @@ export const handlers = [
 			return HttpResponse.json({ detail: "No play-by-play available." }, { status: 409 });
 		}
 		return HttpResponse.json(pbp);
+	}),
+
+	http.get(`${API_BASE}/api/games/:gameId/playback/`, ({ params }) => {
+		const id = params.gameId as string;
+		const game = GAME_DETAILS.get(id);
+		if (!game) {
+			return HttpResponse.json({ detail: "Not found." }, { status: 404 });
+		}
+		const playback = buildPlayback(id);
+		if (!playback) {
+			// No film in the v1 catalog for this game → empty state in the UI.
+			return HttpResponse.json({ detail: "No film available for this game." }, { status: 404 });
+		}
+		return HttpResponse.json(playback);
 	}),
 
 	// Stats query — entity-dispatched, dataset-uniform handler. The real DRF

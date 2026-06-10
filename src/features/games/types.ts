@@ -145,3 +145,23 @@ export type PlayByPlay = {
 	gameId: string;
 	drives: Drive[];
 };
+
+/**
+ * Film playback descriptor for a single game (TGF-335 / ADR-0008).
+ *
+ * Django checks entitlement against the caller's Clerk JWT and returns the HLS
+ * manifest URL plus a short-lived, game-scoped token. The video Worker
+ * exchanges that token (once) for a signed cookie that rides every subsequent
+ * segment request — so the token is opaque to the player. Games with no film in
+ * the catalog return 404, which the UI renders as an empty state.
+ */
+export type GamePlayback = {
+	/** HLS manifest URL (`.m3u8`) served from the gated video origin. */
+	manifestUrl: string;
+	/** Short-lived, game-scoped token minted by Django; opaque to the player. */
+	token: string;
+	/** ISO timestamp after which the token/cookie must be re-minted. */
+	expiresAt: string;
+	/** Optional poster frame for the player. */
+	poster: string | null;
+};
