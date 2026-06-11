@@ -22,6 +22,7 @@ import { Route as GamesIndexRouteImport } from "./routes/games.index"
 import { Route as TeamsTeamIdRouteImport } from "./routes/teams.$teamId"
 import { Route as SignUpSplatRouteImport } from "./routes/sign-up.$"
 import { Route as SignInSplatRouteImport } from "./routes/sign-in.$"
+import { Route as SandboxErrorRouteImport } from "./routes/sandbox.error"
 import { Route as PlayersPlayerIdRouteImport } from "./routes/players.$playerId"
 import { Route as GamesGameIdRouteImport } from "./routes/games.$gameId"
 
@@ -90,6 +91,11 @@ const SignInSplatRoute = SignInSplatRouteImport.update({
   path: "/sign-in/$",
   getParentRoute: () => rootRouteImport,
 } as any)
+const SandboxErrorRoute = SandboxErrorRouteImport.update({
+  id: "/sandbox/error",
+  path: "/sandbox/error",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlayersPlayerIdRoute = PlayersPlayerIdRouteImport.update({
   id: "/$playerId",
   path: "/$playerId",
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   "/theme-preview": typeof ThemePreviewRoute
   "/games/$gameId": typeof GamesGameIdRoute
   "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/sandbox/error": typeof SandboxErrorRoute
   "/sign-in/$": typeof SignInSplatRoute
   "/sign-up/$": typeof SignUpSplatRoute
   "/teams/$teamId": typeof TeamsTeamIdRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   "/theme-preview": typeof ThemePreviewRoute
   "/games/$gameId": typeof GamesGameIdRoute
   "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/sandbox/error": typeof SandboxErrorRoute
   "/sign-in/$": typeof SignInSplatRoute
   "/sign-up/$": typeof SignUpSplatRoute
   "/teams/$teamId": typeof TeamsTeamIdRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   "/theme-preview": typeof ThemePreviewRoute
   "/games/$gameId": typeof GamesGameIdRoute
   "/players/$playerId": typeof PlayersPlayerIdRoute
+  "/sandbox/error": typeof SandboxErrorRoute
   "/sign-in/$": typeof SignInSplatRoute
   "/sign-up/$": typeof SignUpSplatRoute
   "/teams/$teamId": typeof TeamsTeamIdRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | "/theme-preview"
     | "/games/$gameId"
     | "/players/$playerId"
+    | "/sandbox/error"
     | "/sign-in/$"
     | "/sign-up/$"
     | "/teams/$teamId"
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | "/theme-preview"
     | "/games/$gameId"
     | "/players/$playerId"
+    | "/sandbox/error"
     | "/sign-in/$"
     | "/sign-up/$"
     | "/teams/$teamId"
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | "/theme-preview"
     | "/games/$gameId"
     | "/players/$playerId"
+    | "/sandbox/error"
     | "/sign-in/$"
     | "/sign-up/$"
     | "/teams/$teamId"
@@ -209,6 +221,7 @@ export interface RootRouteChildren {
   StatsRoute: typeof StatsRoute
   TeamsRoute: typeof TeamsRouteWithChildren
   ThemePreviewRoute: typeof ThemePreviewRoute
+  SandboxErrorRoute: typeof SandboxErrorRoute
   SignInSplatRoute: typeof SignInSplatRoute
   SignUpSplatRoute: typeof SignUpSplatRoute
 }
@@ -306,6 +319,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof SignInSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/sandbox/error": {
+      id: "/sandbox/error"
+      path: "/sandbox/error"
+      fullPath: "/sandbox/error"
+      preLoaderRoute: typeof SandboxErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/players/$playerId": {
       id: "/players/$playerId"
       path: "/$playerId"
@@ -368,6 +388,7 @@ const rootRouteChildren: RootRouteChildren = {
   StatsRoute: StatsRoute,
   TeamsRoute: TeamsRouteWithChildren,
   ThemePreviewRoute: ThemePreviewRoute,
+  SandboxErrorRoute: SandboxErrorRoute,
   SignInSplatRoute: SignInSplatRoute,
   SignUpSplatRoute: SignUpSplatRoute,
 }

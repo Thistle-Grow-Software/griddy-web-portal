@@ -340,4 +340,23 @@ test.describe("screenshots", () => {
 			fullPage: true,
 		});
 	});
+
+	test("captures /sandbox/error idle and crashed states", async ({ page }) => {
+		await page.goto("/sandbox/error");
+		await expect(page.getByRole("heading", { name: "Sentry error sandbox" })).toBeVisible({
+			timeout: 15_000,
+		});
+		await expect(page.getByTestId("sandbox-error-idle")).toBeVisible();
+		await page.screenshot({
+			path: "docs/screenshots/sandbox-error/sandbox-error-idle.png",
+			fullPage: true,
+		});
+
+		await page.getByTestId("sandbox-crash-button").click();
+		await expect(page.getByText("Something went wrong")).toBeVisible();
+		await page.screenshot({
+			path: "docs/screenshots/sandbox-error/sandbox-error-crashed.png",
+			fullPage: true,
+		});
+	});
 });
