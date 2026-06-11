@@ -1,5 +1,9 @@
 import { client } from "@/api/generated/client.gen";
 
+// Origin of the Griddy DRF backend. In tests + dev MSW intercepts at this
+// origin; in production the env var points at the deployed backend.
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000").replace(/\/+$/, "");
+
 export type ApiClientDeps = {
 	/** Returns the current Clerk session token, or null if unauthenticated. */
 	getToken: () => Promise<string | null>;
@@ -60,6 +64,7 @@ export function createUnauthorizedRetryInterceptor(
  * first so HMR / re-renders don't stack handlers.
  */
 export function configureApiClient(deps: ApiClientDeps): void {
+	client.setConfig({ baseUrl: API_BASE });
 	client.interceptors.request.clear();
 	client.interceptors.response.clear();
 	client.interceptors.request.use(createAuthRequestInterceptor(deps));
