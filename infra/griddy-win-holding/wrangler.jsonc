@@ -1,0 +1,15 @@
+{
+  // Holding page for the griddy.win apex domain (TGF-340). Deployed manually:
+  //   cd infra/griddy-win-holding && npx wrangler deploy
+  // Custom domains auto-manage the DNS records in the griddy.win zone.
+  "name": "griddy-win-holding",
+  "main": "index.ts",
+  "compatibility_date": "2026-06-01",
+  "routes": [
+    { "pattern": "griddy.win", "custom_domain": true },
+    { "pattern": "www.griddy.win", "custom_domain": true }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
