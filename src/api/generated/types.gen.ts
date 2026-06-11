@@ -3,3 +3,4700 @@
 export type ClientOptions = {
     baseUrl: `${string}://src` | (string & {});
 };
+
+/**
+ * List/retrieve view — never exposes the plaintext token.
+ */
+export type ApiKeyList = {
+    readonly id: number;
+    /**
+     * Human-readable label (e.g. 'CI server', 'Local dev').
+     */
+    readonly name: string;
+    environment: EnvironmentEnum;
+    readonly key_prefix: string;
+    /**
+     * Permission strings using the same catalog as JWT tokens (e.g. ['catalog:read']).
+     */
+    readonly scopes: unknown;
+    readonly created_at: string;
+    readonly last_used_at: string | null;
+    readonly expires_at: string | null;
+    readonly revoked_at: string | null;
+    readonly is_active: boolean;
+};
+
+export type AcquisitionDetail = {
+    readonly id: number;
+    readonly source: number;
+    acquired_on?: string;
+    cost_usd?: string | null;
+    rights?: RightsEnum;
+    notes?: string;
+    proof_path?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type AcquisitionList = {
+    readonly id: number;
+    readonly source: number;
+    acquired_on?: string;
+    rights?: RightsEnum;
+    cost_usd?: string | null;
+};
+
+export type AcquisitionWrite = {
+    source: number;
+    acquired_on?: string;
+    cost_usd?: string | null;
+    rights?: RightsEnum;
+    notes?: string;
+    proof_path?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type AssetTag = {
+    readonly id: number;
+    readonly asset: number;
+    readonly tag: number;
+};
+
+export type AssetTagWrite = {
+    asset: number;
+    tag: number;
+};
+
+/**
+ * * `FULL` - Full Broadcast
+ * * `CONDENSED` - Condensed
+ * * `COACHES` - Coaches Film
+ * * `ALL22` - All-22
+ * * `HIGHLIGHTS` - Highlights
+ * * `RADIO` - Radio Audio
+ * * `OTHER` - Other
+ */
+export type AssetTypeEnum = 'FULL' | 'CONDENSED' | 'COACHES' | 'ALL22' | 'HIGHLIGHTS' | 'RADIO' | 'OTHER';
+
+export type Drive = {
+    readonly id: number;
+    sequence: number;
+    readonly team: number;
+    yards_gained?: number;
+    plays_count?: number;
+    ended_description?: string;
+    time_of_possession?: string;
+};
+
+export type DriveSummary = {
+    total_drives: number;
+    scoring_drives: number;
+    total_yards: number;
+};
+
+export type DriveWrite = {
+    sequence: number;
+    team?: number | null;
+    started_quarter?: number | null;
+    started_clock?: string;
+    started_description?: string;
+    started_yard_line?: string;
+    ended_quarter?: number | null;
+    ended_clock?: string;
+    ended_description?: string;
+    ended_yard_line?: string;
+    ended_with_score?: boolean;
+    plays_count?: number;
+    first_downs?: number;
+    yards_gained?: number;
+    yards_gained_net?: number;
+    yards_gained_by_penalty?: number;
+    time_of_possession?: string;
+    inside_20?: boolean;
+};
+
+/**
+ * * `live` - Live
+ * * `test` - Test
+ */
+export type EnvironmentEnum = 'live' | 'test';
+
+export type ExtraPointsBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    made?: number;
+    blocked?: number;
+};
+
+export type ExtraPointsBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    made?: number;
+    blocked?: number;
+};
+
+export type FieldGoalsBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    made?: number;
+    blocked?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    longest?: number | null;
+};
+
+export type FieldGoalsBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    made?: number;
+    blocked?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    longest?: number | null;
+};
+
+export type FranchiseDetail = {
+    readonly id: number;
+    name: string;
+    readonly league: number;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+    readonly teams: Array<TeamReference>;
+};
+
+export type FranchiseList = {
+    readonly id: number;
+    name: string;
+    readonly league: number;
+};
+
+export type FranchiseWrite = {
+    name: string;
+    league: number;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type FullBoxscore = {
+    passing: Array<PassingBoxscore>;
+    rushing: Array<RushingBoxscore>;
+    receiving: Array<ReceivingBoxscore>;
+    tackles: Array<TacklesBoxscore>;
+    fumbles: Array<FumblesBoxscore>;
+    field_goals: Array<FieldGoalsBoxscore>;
+    extra_points: Array<ExtraPointsBoxscore>;
+    kicking: Array<KickingBoxscore>;
+    punting: Array<PuntingBoxscore>;
+    returns: Array<ReturnBoxscore>;
+};
+
+export type FumblesBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    fumbles?: number;
+    own_recoveries?: number;
+    own_recovery_yards?: number;
+    own_recovery_tds?: number;
+    opp_recoveries?: number;
+    opp_recovery_yards?: number;
+    opp_recovery_tds?: number;
+    forced_fumbles?: number;
+    out_of_bounds?: number;
+};
+
+export type FumblesBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    fumbles?: number;
+    own_recoveries?: number;
+    own_recovery_yards?: number;
+    own_recovery_tds?: number;
+    opp_recoveries?: number;
+    opp_recovery_yards?: number;
+    opp_recovery_tds?: number;
+    forced_fumbles?: number;
+    out_of_bounds?: number;
+};
+
+export type GameCompletenessDetail = {
+    readonly id: number;
+    readonly game: number;
+    scope: string;
+    status: StatusEnum;
+    best_full_quality_score?: number | null;
+    has_full?: boolean;
+    has_condensed?: boolean;
+    has_all22?: boolean;
+    readonly computed_at: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type GameCompletenessInline = {
+    readonly id: number;
+    scope: string;
+    status: StatusEnum;
+    best_full_quality_score?: number | null;
+    has_full?: boolean;
+    has_condensed?: boolean;
+    has_all22?: boolean;
+    readonly computed_at: string;
+};
+
+export type GameCompletenessList = {
+    readonly id: number;
+    readonly game: number;
+    scope: string;
+    status: StatusEnum;
+    has_full?: boolean;
+    has_condensed?: boolean;
+    has_all22?: boolean;
+};
+
+export type GameCompletenessWrite = {
+    game: number;
+    scope: string;
+    status: StatusEnum;
+    best_full_quality_score?: number | null;
+    has_full?: boolean;
+    has_condensed?: boolean;
+    has_all22?: boolean;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type GameDetail = {
+    readonly id: number;
+    readonly league: number;
+    readonly season: number;
+    ordinal?: number | null;
+    date_local: string;
+    kickoff_time_local?: string | null;
+    week?: number | null;
+    game_type?: GameTypeEnum;
+    competition_name?: string;
+    neutral_site?: boolean;
+    venue: VenueReference;
+    home_team: TeamReference;
+    away_team: TeamReference;
+    final_home_score?: number | null;
+    final_away_score?: number | null;
+    overtime_periods?: number | null;
+    ap_rank_home?: number | null;
+    ap_rank_away?: number | null;
+    broadcast_channel?: string;
+    status?: string;
+    kickoff_utc?: string | null;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+    readonly quarter_scores: Array<QuarterScoreInline>;
+    readonly completeness: Array<GameCompletenessInline>;
+    readonly asset_count: number;
+};
+
+export type GameList = {
+    readonly id: number;
+    date_local: string;
+    kickoff_time_local?: string | null;
+    week?: number | null;
+    game_type?: GameTypeEnum;
+    home_team: TeamReference;
+    away_team: TeamReference;
+    final_home_score?: number | null;
+    final_away_score?: number | null;
+    venue: VenueReference;
+    broadcast_channel?: string;
+    status?: string;
+};
+
+export type GameReplay = {
+    readonly id: number;
+    replay_type?: string;
+    sub_type?: string;
+    title?: string;
+    description?: string;
+    duration?: number | null;
+    external_id?: string;
+    mcp_playback_id?: string;
+    publish_date?: string | null;
+    thumbnail_url?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type GameReplayWrite = {
+    replay_type?: string;
+    sub_type?: string;
+    title?: string;
+    description?: string;
+    duration?: number | null;
+    external_id?: string;
+    mcp_playback_id?: string;
+    publish_date?: string | null;
+    thumbnail_url?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type GameSummary = {
+    id: number;
+    date_local: string;
+    home_team: TeamReference;
+    away_team: TeamReference;
+    final_home_score: number;
+    final_away_score: number;
+    quarter_scores: Array<QuarterScoreInline>;
+    drives: DriveSummary;
+};
+
+/**
+ * * `REG` - Regular Season
+ * * `CONF` - Conference Championship
+ * * `POST` - Postseason
+ * * `BOWL` - Bowl
+ * * `PLAYOFF` - Playoff
+ * * `EXHIB` - Exhibition/Spring
+ * * `OTHER` - Other
+ */
+export type GameTypeEnum = 'REG' | 'CONF' | 'POST' | 'BOWL' | 'PLAYOFF' | 'EXHIB' | 'OTHER';
+
+export type GameWrite = {
+    league: number;
+    season: number;
+    ordinal?: number | null;
+    date_local: string;
+    kickoff_time_local?: string | null;
+    week?: number | null;
+    game_type?: GameTypeEnum;
+    competition_name?: string;
+    neutral_site?: boolean;
+    venue?: number | null;
+    home_team: number;
+    away_team: number;
+    final_home_score?: number | null;
+    final_away_score?: number | null;
+    overtime_periods?: number | null;
+    ap_rank_home?: number | null;
+    ap_rank_away?: number | null;
+    broadcast_channel?: string;
+    status?: string;
+    kickoff_utc?: string | null;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type KickingBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    kickoffs?: number;
+    yards?: number;
+    touchbacks?: number;
+    inside_20?: number;
+    out_of_bounds?: number;
+    to_endzone?: number;
+    return_yards?: number;
+};
+
+export type KickingBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    kickoffs?: number;
+    yards?: number;
+    touchbacks?: number;
+    inside_20?: number;
+    out_of_bounds?: number;
+    to_endzone?: number;
+    return_yards?: number;
+};
+
+export type LeagueDetail = {
+    readonly id: number;
+    short_name: string;
+    long_name: string;
+    level?: LevelEnum;
+    country?: string;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+    readonly seasons: Array<SeasonList>;
+};
+
+export type LeagueList = {
+    readonly id: number;
+    long_name: string;
+    short_name: string;
+    level?: LevelEnum;
+    readonly seasons_count: number;
+};
+
+export type LeagueWrite = {
+    short_name: string;
+    long_name: string;
+    level?: LevelEnum;
+    country?: string;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+/**
+ * * `HS` - High School
+ * * `COLLEGE` - College
+ * * `PRO` - Professional
+ * * `OTHER` - Other
+ */
+export type LevelEnum = 'HS' | 'COLLEGE' | 'PRO' | 'OTHER';
+
+/**
+ * * `CONFERENCE` - Conference
+ * * `DIVISION` - Division
+ * * `REGION` - Region
+ * * `CLASSIFICATION` - Classification
+ * * `LEAGUE_TIER` - League Tier
+ * * `OTHER` - Other
+ */
+export type OrgTypeEnum = 'CONFERENCE' | 'DIVISION' | 'REGION' | 'CLASSIFICATION' | 'LEAGUE_TIER' | 'OTHER';
+
+/**
+ * Lightweight serializer for nested children in detail view.
+ */
+export type OrgUnitChild = {
+    readonly id: number;
+    short_name: string;
+    long_name: string;
+    org_type?: OrgTypeEnum;
+};
+
+export type OrgUnitDetail = {
+    readonly id: number;
+    short_name: string;
+    long_name: string;
+    org_type?: OrgTypeEnum;
+    readonly league: number;
+    readonly parent: number;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+    readonly children: Array<OrgUnitChild>;
+};
+
+export type OrgUnitList = {
+    readonly id: number;
+    short_name: string;
+    long_name: string;
+    org_type?: OrgTypeEnum;
+    readonly league: number;
+    readonly parent: number;
+};
+
+export type OrgUnitWrite = {
+    short_name: string;
+    long_name: string;
+    org_type?: OrgTypeEnum;
+    league: number;
+    parent?: number | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PaginatedAcquisitionListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<AcquisitionList>;
+};
+
+export type PaginatedAssetTagList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<AssetTag>;
+};
+
+export type PaginatedFranchiseListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<FranchiseList>;
+};
+
+export type PaginatedGameCompletenessListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<GameCompletenessList>;
+};
+
+export type PaginatedGameListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<GameList>;
+};
+
+export type PaginatedLeagueListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<LeagueList>;
+};
+
+export type PaginatedOrgUnitListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<OrgUnitList>;
+};
+
+export type PaginatedPlayListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<PlayList>;
+};
+
+export type PaginatedSeasonListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<SeasonList>;
+};
+
+export type PaginatedSourceListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<SourceList>;
+};
+
+export type PaginatedTagList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<Tag>;
+};
+
+export type PaginatedTeamAffiliationListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<TeamAffiliationList>;
+};
+
+export type PaginatedTeamListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<TeamList>;
+};
+
+export type PaginatedTeamStandingsSnapshotListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<TeamStandingsSnapshotList>;
+};
+
+export type PaginatedTeamVenueOccupancyListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<TeamVenueOccupancyList>;
+};
+
+export type PaginatedVenueListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<VenueList>;
+};
+
+export type PaginatedVideoAssetListList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<VideoAssetList>;
+};
+
+export type PassingBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    completions?: number;
+    completion_pct?: number | null;
+    yards?: number;
+    yards_per_attempt?: number | null;
+    touchdowns?: number;
+    interceptions?: number;
+    sacks?: number;
+    sack_yards?: number;
+    qb_rating?: number | null;
+    longest_pass?: number | null;
+    longest_td_pass?: number | null;
+};
+
+export type PassingBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    completions?: number;
+    completion_pct?: number | null;
+    yards?: number;
+    yards_per_attempt?: number | null;
+    touchdowns?: number;
+    interceptions?: number;
+    sacks?: number;
+    sack_yards?: number;
+    qb_rating?: number | null;
+    longest_pass?: number | null;
+    longest_td_pass?: number | null;
+};
+
+export type PatchedAcquisitionWrite = {
+    source?: number;
+    acquired_on?: string;
+    cost_usd?: string | null;
+    rights?: RightsEnum;
+    notes?: string;
+    proof_path?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedFranchiseWrite = {
+    name?: string;
+    league?: number;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedGameCompletenessWrite = {
+    game?: number;
+    scope?: string;
+    status?: StatusEnum;
+    best_full_quality_score?: number | null;
+    has_full?: boolean;
+    has_condensed?: boolean;
+    has_all22?: boolean;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedGameWrite = {
+    league?: number;
+    season?: number;
+    ordinal?: number | null;
+    date_local?: string;
+    kickoff_time_local?: string | null;
+    week?: number | null;
+    game_type?: GameTypeEnum;
+    competition_name?: string;
+    neutral_site?: boolean;
+    venue?: number | null;
+    home_team?: number;
+    away_team?: number;
+    final_home_score?: number | null;
+    final_away_score?: number | null;
+    overtime_periods?: number | null;
+    ap_rank_home?: number | null;
+    ap_rank_away?: number | null;
+    broadcast_channel?: string;
+    status?: string;
+    kickoff_utc?: string | null;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedLeagueWrite = {
+    short_name?: string;
+    long_name?: string;
+    level?: LevelEnum;
+    country?: string;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedOrgUnitWrite = {
+    short_name?: string;
+    long_name?: string;
+    org_type?: OrgTypeEnum;
+    league?: number;
+    parent?: number | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedSeasonWrite = {
+    league?: number;
+    year?: number;
+    label?: string;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedSourceWrite = {
+    name?: string;
+    source_type?: SourceTypeEnum;
+    url?: string;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedTag = {
+    readonly id?: number;
+    name?: string;
+};
+
+export type PatchedTeamAffiliationWrite = {
+    team?: number;
+    org_unit?: number;
+    season?: number | null;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedTeamVenueOccupancyWrite = {
+    team?: number;
+    venue?: number;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedTeamWrite = {
+    franchise?: number | null;
+    name?: string;
+    alternate_name?: string | null;
+    short_name?: string;
+    city?: string;
+    state?: string | null;
+    country?: string;
+    era_start_date?: string | null;
+    era_end_date?: string | null;
+    school_name?: string;
+    mascot?: string;
+    logo?: string | null;
+    primary_color?: string | null;
+    secondary_color?: string | null;
+    tertiary_color?: string | null;
+    additional_colors?: unknown;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedVenueWrite = {
+    name?: string;
+    city?: string;
+    state?: string | null;
+    country?: string;
+    capacity?: number | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PatchedVideoAssetWrite = {
+    game?: number;
+    acquisition?: number | null;
+    asset_type?: AssetTypeEnum;
+    file_path?: string;
+    container?: string;
+    video_codec?: string;
+    audio_codec?: string;
+    resolution_w?: number | null;
+    resolution_h?: number | null;
+    fps?: string | null;
+    bitrate_kbps?: number | null;
+    duration_seconds?: number | null;
+    file_size_bytes?: number | null;
+    language?: string;
+    has_commercials?: boolean;
+    quality_tier?: QualityTierEnum;
+    quality_notes?: string;
+    is_preferred?: boolean;
+    checksum_sha256?: string;
+    source_url?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PlayDetail = {
+    readonly id: number;
+    play_id: number;
+    sequence: number;
+    quarter?: number | null;
+    down?: number | null;
+    yards_to_go?: number | null;
+    play_type?: string;
+    play_description?: string;
+    play_state?: string;
+    readonly possession_team: number;
+    home_score?: number;
+    visitor_score?: number;
+    yard_line_number?: number | null;
+    yard_line_side?: string;
+    is_scoring?: boolean;
+    is_big_play?: boolean;
+    is_stp_play?: boolean;
+    is_marker_play?: boolean;
+    is_red_zone_play?: boolean | null;
+    start_game_clock?: string;
+    end_game_clock?: string;
+    ngs_data?: unknown;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+    readonly stats: Array<PlayStatInline>;
+};
+
+export type PlayList = {
+    readonly id: number;
+    sequence: number;
+    quarter?: number | null;
+    down?: number | null;
+    yards_to_go?: number | null;
+    play_type?: string;
+    play_description?: string;
+    readonly possession_team: number;
+    home_score?: number;
+    visitor_score?: number;
+    is_scoring?: boolean;
+};
+
+export type PlayStat = {
+    readonly id: number;
+    player_name?: string;
+    stat_id: number;
+    yards?: number;
+    team_abbr?: string;
+};
+
+export type PlayStatInline = {
+    readonly id: number;
+    team_abbr?: string;
+    player_name?: string;
+    gsis_id?: string;
+    stat_id: number;
+    yards?: number;
+};
+
+export type PlayStatWrite = {
+    player_name?: string;
+    stat_id: number;
+    yards?: number;
+    team_abbr?: string;
+    gsis_id?: string;
+};
+
+export type PlayWrite = {
+    play_id: number;
+    sequence: number;
+    quarter?: number | null;
+    down?: number | null;
+    yards_to_go?: number | null;
+    play_type?: string;
+    play_description?: string;
+    play_state?: string;
+    possession_team?: number | null;
+    home_score?: number;
+    visitor_score?: number;
+    yard_line_number?: number | null;
+    yard_line_side?: string;
+    is_scoring?: boolean;
+    is_big_play?: boolean;
+    is_stp_play?: boolean;
+    is_marker_play?: boolean;
+    is_red_zone_play?: boolean | null;
+    start_game_clock?: string;
+    end_game_clock?: string;
+    ngs_data?: unknown;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+/**
+ * Schema mirrors the JSON contract documented in ADR-0008.
+ *
+ * Only ``hls`` is currently emitted for ``type``; future delivery modes
+ * (e.g. ``dash``, ``download``) would extend that enum without changing the
+ * rest of the response.
+ */
+export type PlaybackResponse = {
+    type: TypeEnum;
+    /**
+     * Absolute URL to the master HLS manifest on the configured video origin, including the short-lived playback token as the ``t`` query parameter.
+     */
+    url: string;
+    /**
+     * UTC ISO-8601 timestamp at which the embedded token expires.
+     */
+    expires_at: string;
+};
+
+export type PuntingBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    yards?: number;
+    gross_avg?: number | null;
+    net_avg?: number | null;
+    blocked?: number;
+    longest?: number | null;
+    touchbacks?: number;
+    inside_20?: number;
+    return_yards?: number;
+};
+
+export type PuntingBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    yards?: number;
+    gross_avg?: number | null;
+    net_avg?: number | null;
+    blocked?: number;
+    longest?: number | null;
+    touchbacks?: number;
+    inside_20?: number;
+    return_yards?: number;
+};
+
+/**
+ * * `A` - Tier A (Best Available)
+ * * `B` - Tier B (Very Good)
+ * * `C` - Tier C (Good)
+ * * `D` - Tier D (Filler)
+ */
+export type QualityTierEnum = 'A' | 'B' | 'C' | 'D';
+
+export type QuarterScore = {
+    readonly id: number;
+    readonly team: number;
+    period: number;
+    points?: number;
+};
+
+export type QuarterScoreInline = {
+    readonly id: number;
+    readonly team: number;
+    period: number;
+    points?: number;
+};
+
+export type QuarterScoreWrite = {
+    team: number;
+    period: number;
+    points?: number;
+};
+
+export type ReceivingBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    receptions?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    targets?: number | null;
+    longest_reception?: number | null;
+    longest_td_reception?: number | null;
+    yards_after_catch?: number | null;
+};
+
+export type ReceivingBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    receptions?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    targets?: number | null;
+    longest_reception?: number | null;
+    longest_td_reception?: number | null;
+    yards_after_catch?: number | null;
+};
+
+export type ReturnBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    return_type: string;
+    returns?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    longest?: number | null;
+    longest_td?: number | null;
+    fair_catches?: number;
+};
+
+export type ReturnBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    return_type: string;
+    returns?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    longest?: number | null;
+    longest_td?: number | null;
+    fair_catches?: number;
+};
+
+/**
+ * * `PERSONAL_ONLY` - Personal use only
+ * * `SHAREABLE` - Shareable
+ * * `UNKNOWN` - Unknown
+ */
+export type RightsEnum = 'PERSONAL_ONLY' | 'SHAREABLE' | 'UNKNOWN';
+
+export type RushingBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    longest_rush?: number | null;
+    longest_td_rush?: number | null;
+};
+
+export type RushingBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    longest_rush?: number | null;
+    longest_td_rush?: number | null;
+};
+
+export type SeasonDetail = {
+    readonly id: number;
+    readonly league: number;
+    year: number;
+    label?: string;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type SeasonList = {
+    readonly id: number;
+    readonly league: number;
+    year: number;
+    label?: string;
+    start_date?: string | null;
+    end_date?: string | null;
+};
+
+export type SeasonWrite = {
+    league: number;
+    year: number;
+    label?: string;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type SourceDetail = {
+    readonly id: number;
+    name: string;
+    source_type: SourceTypeEnum;
+    url?: string;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type SourceList = {
+    readonly id: number;
+    name: string;
+    source_type: SourceTypeEnum;
+    url?: string;
+};
+
+/**
+ * * `STREAMING` - Streaming Service
+ * * `YOUTUBE` - YouTube
+ * * `PHYSICAL` - Physical Media (DVD/Blu-ray/etc.)
+ * * `DVR` - Personal Capture (DVR/OTA/Cable)
+ * * `FILE_TRADE` - Other File Source
+ * * `OTHER` - Other
+ */
+export type SourceTypeEnum = 'STREAMING' | 'YOUTUBE' | 'PHYSICAL' | 'DVR' | 'FILE_TRADE' | 'OTHER';
+
+export type SourceWrite = {
+    name: string;
+    source_type: SourceTypeEnum;
+    url?: string;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+/**
+ * * `MISSING` - Missing
+ * * `PARTIAL` - Partial
+ * * `COMPLETE` - Complete
+ * * `COMPLETE_NEEDS_UPGRADE` - Complete (Needs Upgrade)
+ */
+export type StatusEnum = 'MISSING' | 'PARTIAL' | 'COMPLETE' | 'COMPLETE_NEEDS_UPGRADE';
+
+export type TacklesBoxscore = {
+    readonly id: number;
+    readonly game: number;
+    readonly team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    tackles?: number;
+    assists?: number;
+    sacks?: number;
+    sack_yards?: number;
+    qb_hits?: number;
+    tackles_for_loss?: number;
+    tackles_for_loss_yards?: number;
+    safeties?: number;
+    special_teams_tackles?: number;
+    special_teams_assists?: number;
+    special_teams_blocks?: number;
+};
+
+export type TacklesBoxscoreWrite = {
+    team: number;
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    tackles?: number;
+    assists?: number;
+    sacks?: number;
+    sack_yards?: number;
+    qb_hits?: number;
+    tackles_for_loss?: number;
+    tackles_for_loss_yards?: number;
+    safeties?: number;
+    special_teams_tackles?: number;
+    special_teams_assists?: number;
+    special_teams_blocks?: number;
+};
+
+export type Tag = {
+    readonly id: number;
+    name: string;
+};
+
+export type TeamAffiliationDetail = {
+    readonly id: number;
+    readonly team: number;
+    readonly org_unit: number;
+    readonly season: number;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamAffiliationInline = {
+    readonly id: number;
+    readonly org_unit: string;
+    readonly season: string;
+    start_date?: string | null;
+    end_date?: string | null;
+};
+
+export type TeamAffiliationList = {
+    readonly id: number;
+    readonly team: number;
+    readonly org_unit: number;
+    readonly season: number;
+};
+
+export type TeamAffiliationWrite = {
+    team: number;
+    org_unit: number;
+    season?: number | null;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamDetail = {
+    readonly id: number;
+    readonly franchise: number;
+    name: string;
+    alternate_name?: string | null;
+    short_name?: string;
+    city?: string;
+    state?: string | null;
+    country?: string;
+    era_start_date?: string | null;
+    era_end_date?: string | null;
+    school_name?: string;
+    mascot?: string;
+    logo?: string | null;
+    primary_color?: string | null;
+    secondary_color?: string | null;
+    tertiary_color?: string | null;
+    additional_colors?: unknown;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+    readonly affiliations: Array<TeamAffiliationInline>;
+    readonly venue_occupancies: Array<TeamVenueOccupancyInline>;
+};
+
+export type TeamList = {
+    readonly id: number;
+    name: string;
+    short_name?: string;
+    city?: string;
+    state?: string | null;
+    readonly franchise: number;
+    primary_color?: string | null;
+    secondary_color?: string | null;
+};
+
+export type TeamReference = {
+    readonly id: number;
+    name: string;
+    short_name?: string;
+};
+
+export type TeamStandingsSnapshotDetail = {
+    readonly id: number;
+    readonly team: number;
+    readonly season: number;
+    week: number;
+    overall_wins?: number;
+    overall_losses?: number;
+    overall_ties?: number;
+    overall_win_pct?: number;
+    points_for?: number;
+    points_against?: number;
+    conference_wins?: number;
+    conference_losses?: number;
+    conference_rank?: number | null;
+    division_wins?: number;
+    division_losses?: number;
+    division_rank?: number | null;
+    home_wins?: number;
+    home_losses?: number;
+    road_wins?: number;
+    road_losses?: number;
+    streak_length?: number;
+    streak_type?: string;
+    clinched_playoff?: boolean;
+    clinched_division?: boolean;
+    clinched_bye?: boolean;
+    eliminated?: boolean;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamStandingsSnapshotList = {
+    readonly id: number;
+    readonly team: number;
+    readonly season: number;
+    week: number;
+    overall_wins?: number;
+    overall_losses?: number;
+    overall_ties?: number;
+    overall_win_pct?: number;
+};
+
+export type TeamStandingsSnapshotWrite = {
+    team: number;
+    season: number;
+    week: number;
+    overall_wins?: number;
+    overall_losses?: number;
+    overall_ties?: number;
+    overall_win_pct?: number;
+    points_for?: number;
+    points_against?: number;
+    conference_wins?: number;
+    conference_losses?: number;
+    conference_rank?: number | null;
+    division_wins?: number;
+    division_losses?: number;
+    division_rank?: number | null;
+    home_wins?: number;
+    home_losses?: number;
+    road_wins?: number;
+    road_losses?: number;
+    streak_length?: number;
+    streak_type?: string;
+    clinched_playoff?: boolean;
+    clinched_division?: boolean;
+    clinched_bye?: boolean;
+    eliminated?: boolean;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamVenueOccupancyDetail = {
+    readonly id: number;
+    readonly team: number;
+    readonly venue: number;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamVenueOccupancyInline = {
+    readonly id: number;
+    readonly venue: string;
+    start_date?: string | null;
+    end_date?: string | null;
+};
+
+export type TeamVenueOccupancyList = {
+    readonly id: number;
+    readonly team: number;
+    readonly venue: number;
+    start_date?: string | null;
+    end_date?: string | null;
+};
+
+export type TeamVenueOccupancyWrite = {
+    team: number;
+    venue: number;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamWrite = {
+    franchise?: number | null;
+    name: string;
+    alternate_name?: string | null;
+    short_name?: string;
+    city?: string;
+    state?: string | null;
+    country?: string;
+    era_start_date?: string | null;
+    era_end_date?: string | null;
+    school_name?: string;
+    mascot?: string;
+    logo?: string | null;
+    primary_color?: string | null;
+    secondary_color?: string | null;
+    tertiary_color?: string | null;
+    additional_colors?: unknown;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+/**
+ * * `hls` - HLS
+ */
+export type TypeEnum = 'hls';
+
+export type VenueDetail = {
+    readonly id: number;
+    name: string;
+    city?: string;
+    state?: string | null;
+    country?: string;
+    capacity?: number | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type VenueList = {
+    readonly id: number;
+    name: string;
+    city?: string;
+    state?: string | null;
+    capacity?: number | null;
+};
+
+export type VenueReference = {
+    readonly id: number;
+    name: string;
+};
+
+export type VenueWrite = {
+    name: string;
+    city?: string;
+    state?: string | null;
+    country?: string;
+    capacity?: number | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type VideoAssetDetail = {
+    readonly id: number;
+    readonly game: number;
+    readonly acquisition: number;
+    asset_type?: AssetTypeEnum;
+    file_path: string;
+    container?: string;
+    video_codec?: string;
+    audio_codec?: string;
+    resolution_w?: number | null;
+    resolution_h?: number | null;
+    fps?: string | null;
+    bitrate_kbps?: number | null;
+    duration_seconds?: number | null;
+    file_size_bytes?: number | null;
+    language?: string;
+    has_commercials?: boolean;
+    quality_tier?: QualityTierEnum;
+    quality_notes?: string;
+    is_preferred?: boolean;
+    checksum_sha256?: string;
+    readonly created_at: string;
+    last_verified_at?: string | null;
+    source_url?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type VideoAssetList = {
+    readonly id: number;
+    readonly game: number;
+    asset_type?: AssetTypeEnum;
+    quality_tier?: QualityTierEnum;
+    file_size_bytes?: number | null;
+    duration_seconds?: number | null;
+    is_preferred?: boolean;
+    readonly created_at: string;
+};
+
+export type VideoAssetWrite = {
+    game: number;
+    acquisition?: number | null;
+    asset_type?: AssetTypeEnum;
+    file_path: string;
+    container?: string;
+    video_codec?: string;
+    audio_codec?: string;
+    resolution_w?: number | null;
+    resolution_h?: number | null;
+    fps?: string | null;
+    bitrate_kbps?: number | null;
+    duration_seconds?: number | null;
+    file_size_bytes?: number | null;
+    language?: string;
+    has_commercials?: boolean;
+    quality_tier?: QualityTierEnum;
+    quality_notes?: string;
+    is_preferred?: boolean;
+    checksum_sha256?: string;
+    source_url?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type AcquisitionDetailWritable = {
+    acquired_on?: string;
+    cost_usd?: string | null;
+    rights?: RightsEnum;
+    notes?: string;
+    proof_path?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type AcquisitionListWritable = {
+    acquired_on?: string;
+    rights?: RightsEnum;
+    cost_usd?: string | null;
+};
+
+export type DriveWritable = {
+    sequence: number;
+    yards_gained?: number;
+    plays_count?: number;
+    ended_description?: string;
+    time_of_possession?: string;
+};
+
+export type ExtraPointsBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    made?: number;
+    blocked?: number;
+};
+
+export type FieldGoalsBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    made?: number;
+    blocked?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    longest?: number | null;
+};
+
+export type FranchiseDetailWritable = {
+    name: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type FranchiseListWritable = {
+    name: string;
+};
+
+export type FullBoxscoreWritable = {
+    passing: Array<PassingBoxscoreWritable>;
+    rushing: Array<RushingBoxscoreWritable>;
+    receiving: Array<ReceivingBoxscoreWritable>;
+    tackles: Array<TacklesBoxscoreWritable>;
+    fumbles: Array<FumblesBoxscoreWritable>;
+    field_goals: Array<FieldGoalsBoxscoreWritable>;
+    extra_points: Array<ExtraPointsBoxscoreWritable>;
+    kicking: Array<KickingBoxscoreWritable>;
+    punting: Array<PuntingBoxscoreWritable>;
+    returns: Array<ReturnBoxscoreWritable>;
+};
+
+export type FumblesBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    fumbles?: number;
+    own_recoveries?: number;
+    own_recovery_yards?: number;
+    own_recovery_tds?: number;
+    opp_recoveries?: number;
+    opp_recovery_yards?: number;
+    opp_recovery_tds?: number;
+    forced_fumbles?: number;
+    out_of_bounds?: number;
+};
+
+export type GameCompletenessDetailWritable = {
+    scope: string;
+    status: StatusEnum;
+    best_full_quality_score?: number | null;
+    has_full?: boolean;
+    has_condensed?: boolean;
+    has_all22?: boolean;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type GameCompletenessInlineWritable = {
+    scope: string;
+    status: StatusEnum;
+    best_full_quality_score?: number | null;
+    has_full?: boolean;
+    has_condensed?: boolean;
+    has_all22?: boolean;
+};
+
+export type GameCompletenessListWritable = {
+    scope: string;
+    status: StatusEnum;
+    has_full?: boolean;
+    has_condensed?: boolean;
+    has_all22?: boolean;
+};
+
+export type GameDetailWritable = {
+    ordinal?: number | null;
+    date_local: string;
+    kickoff_time_local?: string | null;
+    week?: number | null;
+    game_type?: GameTypeEnum;
+    competition_name?: string;
+    neutral_site?: boolean;
+    final_home_score?: number | null;
+    final_away_score?: number | null;
+    overtime_periods?: number | null;
+    ap_rank_home?: number | null;
+    ap_rank_away?: number | null;
+    broadcast_channel?: string;
+    status?: string;
+    kickoff_utc?: string | null;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type GameListWritable = {
+    date_local: string;
+    kickoff_time_local?: string | null;
+    week?: number | null;
+    game_type?: GameTypeEnum;
+    final_home_score?: number | null;
+    final_away_score?: number | null;
+    broadcast_channel?: string;
+    status?: string;
+};
+
+export type GameReplayWritable = {
+    replay_type?: string;
+    sub_type?: string;
+    title?: string;
+    description?: string;
+    duration?: number | null;
+    external_id?: string;
+    mcp_playback_id?: string;
+    publish_date?: string | null;
+    thumbnail_url?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type GameSummaryWritable = {
+    id: number;
+    date_local: string;
+    home_team: TeamReferenceWritable;
+    away_team: TeamReferenceWritable;
+    final_home_score: number;
+    final_away_score: number;
+    quarter_scores: Array<QuarterScoreInlineWritable>;
+    drives: DriveSummary;
+};
+
+export type KickingBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    kickoffs?: number;
+    yards?: number;
+    touchbacks?: number;
+    inside_20?: number;
+    out_of_bounds?: number;
+    to_endzone?: number;
+    return_yards?: number;
+};
+
+export type LeagueDetailWritable = {
+    short_name: string;
+    long_name: string;
+    level?: LevelEnum;
+    country?: string;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type LeagueListWritable = {
+    long_name: string;
+    short_name: string;
+    level?: LevelEnum;
+};
+
+/**
+ * Lightweight serializer for nested children in detail view.
+ */
+export type OrgUnitChildWritable = {
+    short_name: string;
+    long_name: string;
+    org_type?: OrgTypeEnum;
+};
+
+export type OrgUnitDetailWritable = {
+    short_name: string;
+    long_name: string;
+    org_type?: OrgTypeEnum;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type OrgUnitListWritable = {
+    short_name: string;
+    long_name: string;
+    org_type?: OrgTypeEnum;
+};
+
+export type PaginatedAcquisitionListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<AcquisitionListWritable>;
+};
+
+export type PaginatedAssetTagListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<unknown>;
+};
+
+export type PaginatedFranchiseListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<FranchiseListWritable>;
+};
+
+export type PaginatedGameCompletenessListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<GameCompletenessListWritable>;
+};
+
+export type PaginatedGameListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<GameListWritable>;
+};
+
+export type PaginatedLeagueListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<LeagueListWritable>;
+};
+
+export type PaginatedOrgUnitListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<OrgUnitListWritable>;
+};
+
+export type PaginatedPlayListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<PlayListWritable>;
+};
+
+export type PaginatedSeasonListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<SeasonListWritable>;
+};
+
+export type PaginatedSourceListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<SourceListWritable>;
+};
+
+export type PaginatedTagListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<TagWritable>;
+};
+
+export type PaginatedTeamAffiliationListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<unknown>;
+};
+
+export type PaginatedTeamListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<TeamListWritable>;
+};
+
+export type PaginatedTeamStandingsSnapshotListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<TeamStandingsSnapshotListWritable>;
+};
+
+export type PaginatedTeamVenueOccupancyListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<TeamVenueOccupancyListWritable>;
+};
+
+export type PaginatedVenueListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<VenueListWritable>;
+};
+
+export type PaginatedVideoAssetListListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<VideoAssetListWritable>;
+};
+
+export type PassingBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    completions?: number;
+    completion_pct?: number | null;
+    yards?: number;
+    yards_per_attempt?: number | null;
+    touchdowns?: number;
+    interceptions?: number;
+    sacks?: number;
+    sack_yards?: number;
+    qb_rating?: number | null;
+    longest_pass?: number | null;
+    longest_td_pass?: number | null;
+};
+
+export type PatchedTagWritable = {
+    name?: string;
+};
+
+export type PlayDetailWritable = {
+    play_id: number;
+    sequence: number;
+    quarter?: number | null;
+    down?: number | null;
+    yards_to_go?: number | null;
+    play_type?: string;
+    play_description?: string;
+    play_state?: string;
+    home_score?: number;
+    visitor_score?: number;
+    yard_line_number?: number | null;
+    yard_line_side?: string;
+    is_scoring?: boolean;
+    is_big_play?: boolean;
+    is_stp_play?: boolean;
+    is_marker_play?: boolean;
+    is_red_zone_play?: boolean | null;
+    start_game_clock?: string;
+    end_game_clock?: string;
+    ngs_data?: unknown;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type PlayListWritable = {
+    sequence: number;
+    quarter?: number | null;
+    down?: number | null;
+    yards_to_go?: number | null;
+    play_type?: string;
+    play_description?: string;
+    home_score?: number;
+    visitor_score?: number;
+    is_scoring?: boolean;
+};
+
+export type PlayStatWritable = {
+    player_name?: string;
+    stat_id: number;
+    yards?: number;
+    team_abbr?: string;
+};
+
+export type PlayStatInlineWritable = {
+    team_abbr?: string;
+    player_name?: string;
+    gsis_id?: string;
+    stat_id: number;
+    yards?: number;
+};
+
+export type PuntingBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    yards?: number;
+    gross_avg?: number | null;
+    net_avg?: number | null;
+    blocked?: number;
+    longest?: number | null;
+    touchbacks?: number;
+    inside_20?: number;
+    return_yards?: number;
+};
+
+export type QuarterScoreWritable = {
+    period: number;
+    points?: number;
+};
+
+export type QuarterScoreInlineWritable = {
+    period: number;
+    points?: number;
+};
+
+export type ReceivingBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    receptions?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    targets?: number | null;
+    longest_reception?: number | null;
+    longest_td_reception?: number | null;
+    yards_after_catch?: number | null;
+};
+
+export type ReturnBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    return_type: string;
+    returns?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    longest?: number | null;
+    longest_td?: number | null;
+    fair_catches?: number;
+};
+
+export type RushingBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    attempts?: number;
+    yards?: number;
+    avg_yards?: number | null;
+    touchdowns?: number;
+    longest_rush?: number | null;
+    longest_td_rush?: number | null;
+};
+
+export type SeasonDetailWritable = {
+    year: number;
+    label?: string;
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type SeasonListWritable = {
+    year: number;
+    label?: string;
+    start_date?: string | null;
+    end_date?: string | null;
+};
+
+export type SourceDetailWritable = {
+    name: string;
+    source_type: SourceTypeEnum;
+    url?: string;
+    notes?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type SourceListWritable = {
+    name: string;
+    source_type: SourceTypeEnum;
+    url?: string;
+};
+
+export type TacklesBoxscoreWritable = {
+    side: string;
+    player_name: string;
+    jersey_number?: number | null;
+    position?: string;
+    tackles?: number;
+    assists?: number;
+    sacks?: number;
+    sack_yards?: number;
+    qb_hits?: number;
+    tackles_for_loss?: number;
+    tackles_for_loss_yards?: number;
+    safeties?: number;
+    special_teams_tackles?: number;
+    special_teams_assists?: number;
+    special_teams_blocks?: number;
+};
+
+export type TagWritable = {
+    name: string;
+};
+
+export type TeamAffiliationDetailWritable = {
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamAffiliationInlineWritable = {
+    start_date?: string | null;
+    end_date?: string | null;
+};
+
+export type TeamDetailWritable = {
+    name: string;
+    alternate_name?: string | null;
+    short_name?: string;
+    city?: string;
+    state?: string | null;
+    country?: string;
+    era_start_date?: string | null;
+    era_end_date?: string | null;
+    school_name?: string;
+    mascot?: string;
+    logo?: string | null;
+    primary_color?: string | null;
+    secondary_color?: string | null;
+    tertiary_color?: string | null;
+    additional_colors?: unknown;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamListWritable = {
+    name: string;
+    short_name?: string;
+    city?: string;
+    state?: string | null;
+    primary_color?: string | null;
+    secondary_color?: string | null;
+};
+
+export type TeamReferenceWritable = {
+    name: string;
+    short_name?: string;
+};
+
+export type TeamStandingsSnapshotDetailWritable = {
+    week: number;
+    overall_wins?: number;
+    overall_losses?: number;
+    overall_ties?: number;
+    overall_win_pct?: number;
+    points_for?: number;
+    points_against?: number;
+    conference_wins?: number;
+    conference_losses?: number;
+    conference_rank?: number | null;
+    division_wins?: number;
+    division_losses?: number;
+    division_rank?: number | null;
+    home_wins?: number;
+    home_losses?: number;
+    road_wins?: number;
+    road_losses?: number;
+    streak_length?: number;
+    streak_type?: string;
+    clinched_playoff?: boolean;
+    clinched_division?: boolean;
+    clinched_bye?: boolean;
+    eliminated?: boolean;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamStandingsSnapshotListWritable = {
+    week: number;
+    overall_wins?: number;
+    overall_losses?: number;
+    overall_ties?: number;
+    overall_win_pct?: number;
+};
+
+export type TeamVenueOccupancyDetailWritable = {
+    start_date?: string | null;
+    end_date?: string | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type TeamVenueOccupancyInlineWritable = {
+    start_date?: string | null;
+    end_date?: string | null;
+};
+
+export type TeamVenueOccupancyListWritable = {
+    start_date?: string | null;
+    end_date?: string | null;
+};
+
+export type VenueDetailWritable = {
+    name: string;
+    city?: string;
+    state?: string | null;
+    country?: string;
+    capacity?: number | null;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type VenueListWritable = {
+    name: string;
+    city?: string;
+    state?: string | null;
+    capacity?: number | null;
+};
+
+export type VenueReferenceWritable = {
+    name: string;
+};
+
+export type VideoAssetDetailWritable = {
+    asset_type?: AssetTypeEnum;
+    file_path: string;
+    container?: string;
+    video_codec?: string;
+    audio_codec?: string;
+    resolution_w?: number | null;
+    resolution_h?: number | null;
+    fps?: string | null;
+    bitrate_kbps?: number | null;
+    duration_seconds?: number | null;
+    file_size_bytes?: number | null;
+    language?: string;
+    has_commercials?: boolean;
+    quality_tier?: QualityTierEnum;
+    quality_notes?: string;
+    is_preferred?: boolean;
+    checksum_sha256?: string;
+    last_verified_at?: string | null;
+    source_url?: string;
+    /**
+     * Data supplied by third party providers that we haven't decided how or if to use yet.
+     */
+    bonus_data?: unknown;
+    external_ids?: unknown;
+};
+
+export type VideoAssetListWritable = {
+    asset_type?: AssetTypeEnum;
+    quality_tier?: QualityTierEnum;
+    file_size_bytes?: number | null;
+    duration_seconds?: number | null;
+    is_preferred?: boolean;
+};
+
+export type AcquisitionsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        /**
+         * * `PERSONAL_ONLY` - Personal use only
+         * * `SHAREABLE` - Shareable
+         * * `UNKNOWN` - Unknown
+         */
+        rights?: 'PERSONAL_ONLY' | 'SHAREABLE' | 'UNKNOWN';
+        source?: number;
+    };
+    url: '/api/v1/acquisitions/';
+};
+
+export type AcquisitionsListResponses = {
+    200: PaginatedAcquisitionListList;
+};
+
+export type AcquisitionsListResponse = AcquisitionsListResponses[keyof AcquisitionsListResponses];
+
+export type AcquisitionsCreateData = {
+    body: AcquisitionWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/acquisitions/';
+};
+
+export type AcquisitionsCreateResponses = {
+    201: AcquisitionWrite;
+};
+
+export type AcquisitionsCreateResponse = AcquisitionsCreateResponses[keyof AcquisitionsCreateResponses];
+
+export type AcquisitionsDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this acquisition.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/acquisitions/{id}/';
+};
+
+export type AcquisitionsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type AcquisitionsDestroyResponse = AcquisitionsDestroyResponses[keyof AcquisitionsDestroyResponses];
+
+export type AcquisitionsRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this acquisition.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/acquisitions/{id}/';
+};
+
+export type AcquisitionsRetrieveResponses = {
+    200: AcquisitionDetail;
+};
+
+export type AcquisitionsRetrieveResponse = AcquisitionsRetrieveResponses[keyof AcquisitionsRetrieveResponses];
+
+export type AcquisitionsPartialUpdateData = {
+    body?: PatchedAcquisitionWrite;
+    path: {
+        /**
+         * A unique integer value identifying this acquisition.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/acquisitions/{id}/';
+};
+
+export type AcquisitionsPartialUpdateResponses = {
+    200: AcquisitionWrite;
+};
+
+export type AcquisitionsPartialUpdateResponse = AcquisitionsPartialUpdateResponses[keyof AcquisitionsPartialUpdateResponses];
+
+export type AcquisitionsUpdateData = {
+    body: AcquisitionWrite;
+    path: {
+        /**
+         * A unique integer value identifying this acquisition.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/acquisitions/{id}/';
+};
+
+export type AcquisitionsUpdateResponses = {
+    200: AcquisitionWrite;
+};
+
+export type AcquisitionsUpdateResponse = AcquisitionsUpdateResponses[keyof AcquisitionsUpdateResponses];
+
+export type ApiKeysListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/api-keys/';
+};
+
+export type ApiKeysListResponses = {
+    200: Array<ApiKeyList>;
+};
+
+export type ApiKeysListResponse = ApiKeysListResponses[keyof ApiKeysListResponses];
+
+export type ApiKeysCreateData = {
+    body?: ApiKeyList;
+    path?: never;
+    query?: never;
+    url: '/api/v1/api-keys/';
+};
+
+export type ApiKeysCreateResponses = {
+    201: ApiKeyList;
+};
+
+export type ApiKeysCreateResponse = ApiKeysCreateResponses[keyof ApiKeysCreateResponses];
+
+export type ApiKeysRetrieveData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/api-keys/{id}/';
+};
+
+export type ApiKeysRetrieveResponses = {
+    200: ApiKeyList;
+};
+
+export type ApiKeysRetrieveResponse = ApiKeysRetrieveResponses[keyof ApiKeysRetrieveResponses];
+
+export type ApiKeysRevokeCreateData = {
+    body?: ApiKeyList;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/api-keys/{id}/revoke/';
+};
+
+export type ApiKeysRevokeCreateResponses = {
+    200: ApiKeyList;
+};
+
+export type ApiKeysRevokeCreateResponse = ApiKeysRevokeCreateResponses[keyof ApiKeysRevokeCreateResponses];
+
+export type AssetTagsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/asset-tags/';
+};
+
+export type AssetTagsListResponses = {
+    200: PaginatedAssetTagList;
+};
+
+export type AssetTagsListResponse = AssetTagsListResponses[keyof AssetTagsListResponses];
+
+export type AssetTagsCreateData = {
+    body: AssetTagWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/asset-tags/';
+};
+
+export type AssetTagsCreateResponses = {
+    201: AssetTagWrite;
+};
+
+export type AssetTagsCreateResponse = AssetTagsCreateResponses[keyof AssetTagsCreateResponses];
+
+export type AssetTagsDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this asset tag.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/asset-tags/{id}/';
+};
+
+export type AssetTagsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type AssetTagsDestroyResponse = AssetTagsDestroyResponses[keyof AssetTagsDestroyResponses];
+
+export type FranchisesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        league?: number;
+    };
+    url: '/api/v1/franchises/';
+};
+
+export type FranchisesListResponses = {
+    200: PaginatedFranchiseListList;
+};
+
+export type FranchisesListResponse = FranchisesListResponses[keyof FranchisesListResponses];
+
+export type FranchisesCreateData = {
+    body: FranchiseWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/franchises/';
+};
+
+export type FranchisesCreateResponses = {
+    201: FranchiseWrite;
+};
+
+export type FranchisesCreateResponse = FranchisesCreateResponses[keyof FranchisesCreateResponses];
+
+export type FranchisesRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this franchise.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/franchises/{id}/';
+};
+
+export type FranchisesRetrieveResponses = {
+    200: FranchiseDetail;
+};
+
+export type FranchisesRetrieveResponse = FranchisesRetrieveResponses[keyof FranchisesRetrieveResponses];
+
+export type FranchisesPartialUpdateData = {
+    body?: PatchedFranchiseWrite;
+    path: {
+        /**
+         * A unique integer value identifying this franchise.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/franchises/{id}/';
+};
+
+export type FranchisesPartialUpdateResponses = {
+    200: FranchiseWrite;
+};
+
+export type FranchisesPartialUpdateResponse = FranchisesPartialUpdateResponses[keyof FranchisesPartialUpdateResponses];
+
+export type FranchisesUpdateData = {
+    body: FranchiseWrite;
+    path: {
+        /**
+         * A unique integer value identifying this franchise.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/franchises/{id}/';
+};
+
+export type FranchisesUpdateResponses = {
+    200: FranchiseWrite;
+};
+
+export type FranchisesUpdateResponse = FranchisesUpdateResponses[keyof FranchisesUpdateResponses];
+
+export type GameCompletenessListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        has_all22?: boolean;
+        has_condensed?: boolean;
+        has_full?: boolean;
+        scope?: string;
+        /**
+         * * `MISSING` - Missing
+         * * `PARTIAL` - Partial
+         * * `COMPLETE` - Complete
+         * * `COMPLETE_NEEDS_UPGRADE` - Complete (Needs Upgrade)
+         */
+        status?: 'COMPLETE' | 'COMPLETE_NEEDS_UPGRADE' | 'MISSING' | 'PARTIAL';
+    };
+    url: '/api/v1/game-completeness/';
+};
+
+export type GameCompletenessListResponses = {
+    200: PaginatedGameCompletenessListList;
+};
+
+export type GameCompletenessListResponse = GameCompletenessListResponses[keyof GameCompletenessListResponses];
+
+export type GameCompletenessCreateData = {
+    body: GameCompletenessWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/game-completeness/';
+};
+
+export type GameCompletenessCreateResponses = {
+    201: GameCompletenessWrite;
+};
+
+export type GameCompletenessCreateResponse = GameCompletenessCreateResponses[keyof GameCompletenessCreateResponses];
+
+export type GameCompletenessRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this game completeness.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/game-completeness/{id}/';
+};
+
+export type GameCompletenessRetrieveResponses = {
+    200: GameCompletenessDetail;
+};
+
+export type GameCompletenessRetrieveResponse = GameCompletenessRetrieveResponses[keyof GameCompletenessRetrieveResponses];
+
+export type GameCompletenessPartialUpdateData = {
+    body?: PatchedGameCompletenessWrite;
+    path: {
+        /**
+         * A unique integer value identifying this game completeness.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/game-completeness/{id}/';
+};
+
+export type GameCompletenessPartialUpdateResponses = {
+    200: GameCompletenessWrite;
+};
+
+export type GameCompletenessPartialUpdateResponse = GameCompletenessPartialUpdateResponses[keyof GameCompletenessPartialUpdateResponses];
+
+export type GameCompletenessUpdateData = {
+    body: GameCompletenessWrite;
+    path: {
+        /**
+         * A unique integer value identifying this game completeness.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/game-completeness/{id}/';
+};
+
+export type GameCompletenessUpdateResponses = {
+    200: GameCompletenessWrite;
+};
+
+export type GameCompletenessUpdateResponse = GameCompletenessUpdateResponses[keyof GameCompletenessUpdateResponses];
+
+export type GamesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        date_from?: string;
+        date_to?: string;
+        game_type?: string;
+        has_assets?: boolean;
+        league?: number;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+        season_year?: number;
+        team?: number;
+        week?: number;
+    };
+    url: '/api/v1/games/';
+};
+
+export type GamesListResponses = {
+    200: PaginatedGameListList;
+};
+
+export type GamesListResponse = GamesListResponses[keyof GamesListResponses];
+
+export type GamesCreateData = {
+    body: GameWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/games/';
+};
+
+export type GamesCreateResponses = {
+    201: GameWrite;
+};
+
+export type GamesCreateResponse = GamesCreateResponses[keyof GamesCreateResponses];
+
+export type GamesBoxscoresExtraPointsListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/extra-points/';
+};
+
+export type GamesBoxscoresExtraPointsListResponses = {
+    200: Array<ExtraPointsBoxscore>;
+};
+
+export type GamesBoxscoresExtraPointsListResponse = GamesBoxscoresExtraPointsListResponses[keyof GamesBoxscoresExtraPointsListResponses];
+
+export type GamesBoxscoresExtraPointsCreateData = {
+    body: ExtraPointsBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/extra-points/';
+};
+
+export type GamesBoxscoresExtraPointsCreateResponses = {
+    201: ExtraPointsBoxscoreWrite;
+};
+
+export type GamesBoxscoresExtraPointsCreateResponse = GamesBoxscoresExtraPointsCreateResponses[keyof GamesBoxscoresExtraPointsCreateResponses];
+
+export type GamesBoxscoresFieldGoalsListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/field-goals/';
+};
+
+export type GamesBoxscoresFieldGoalsListResponses = {
+    200: Array<FieldGoalsBoxscore>;
+};
+
+export type GamesBoxscoresFieldGoalsListResponse = GamesBoxscoresFieldGoalsListResponses[keyof GamesBoxscoresFieldGoalsListResponses];
+
+export type GamesBoxscoresFieldGoalsCreateData = {
+    body: FieldGoalsBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/field-goals/';
+};
+
+export type GamesBoxscoresFieldGoalsCreateResponses = {
+    201: FieldGoalsBoxscoreWrite;
+};
+
+export type GamesBoxscoresFieldGoalsCreateResponse = GamesBoxscoresFieldGoalsCreateResponses[keyof GamesBoxscoresFieldGoalsCreateResponses];
+
+export type GamesBoxscoresFumblesListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/fumbles/';
+};
+
+export type GamesBoxscoresFumblesListResponses = {
+    200: Array<FumblesBoxscore>;
+};
+
+export type GamesBoxscoresFumblesListResponse = GamesBoxscoresFumblesListResponses[keyof GamesBoxscoresFumblesListResponses];
+
+export type GamesBoxscoresFumblesCreateData = {
+    body: FumblesBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/fumbles/';
+};
+
+export type GamesBoxscoresFumblesCreateResponses = {
+    201: FumblesBoxscoreWrite;
+};
+
+export type GamesBoxscoresFumblesCreateResponse = GamesBoxscoresFumblesCreateResponses[keyof GamesBoxscoresFumblesCreateResponses];
+
+export type GamesBoxscoresKickingListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/kicking/';
+};
+
+export type GamesBoxscoresKickingListResponses = {
+    200: Array<KickingBoxscore>;
+};
+
+export type GamesBoxscoresKickingListResponse = GamesBoxscoresKickingListResponses[keyof GamesBoxscoresKickingListResponses];
+
+export type GamesBoxscoresKickingCreateData = {
+    body: KickingBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/kicking/';
+};
+
+export type GamesBoxscoresKickingCreateResponses = {
+    201: KickingBoxscoreWrite;
+};
+
+export type GamesBoxscoresKickingCreateResponse = GamesBoxscoresKickingCreateResponses[keyof GamesBoxscoresKickingCreateResponses];
+
+export type GamesBoxscoresPassingListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/passing/';
+};
+
+export type GamesBoxscoresPassingListResponses = {
+    200: Array<PassingBoxscore>;
+};
+
+export type GamesBoxscoresPassingListResponse = GamesBoxscoresPassingListResponses[keyof GamesBoxscoresPassingListResponses];
+
+export type GamesBoxscoresPassingCreateData = {
+    body: PassingBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/passing/';
+};
+
+export type GamesBoxscoresPassingCreateResponses = {
+    201: PassingBoxscoreWrite;
+};
+
+export type GamesBoxscoresPassingCreateResponse = GamesBoxscoresPassingCreateResponses[keyof GamesBoxscoresPassingCreateResponses];
+
+export type GamesBoxscoresPuntingListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/punting/';
+};
+
+export type GamesBoxscoresPuntingListResponses = {
+    200: Array<PuntingBoxscore>;
+};
+
+export type GamesBoxscoresPuntingListResponse = GamesBoxscoresPuntingListResponses[keyof GamesBoxscoresPuntingListResponses];
+
+export type GamesBoxscoresPuntingCreateData = {
+    body: PuntingBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/punting/';
+};
+
+export type GamesBoxscoresPuntingCreateResponses = {
+    201: PuntingBoxscoreWrite;
+};
+
+export type GamesBoxscoresPuntingCreateResponse = GamesBoxscoresPuntingCreateResponses[keyof GamesBoxscoresPuntingCreateResponses];
+
+export type GamesBoxscoresReceivingListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/receiving/';
+};
+
+export type GamesBoxscoresReceivingListResponses = {
+    200: Array<ReceivingBoxscore>;
+};
+
+export type GamesBoxscoresReceivingListResponse = GamesBoxscoresReceivingListResponses[keyof GamesBoxscoresReceivingListResponses];
+
+export type GamesBoxscoresReceivingCreateData = {
+    body: ReceivingBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/receiving/';
+};
+
+export type GamesBoxscoresReceivingCreateResponses = {
+    201: ReceivingBoxscoreWrite;
+};
+
+export type GamesBoxscoresReceivingCreateResponse = GamesBoxscoresReceivingCreateResponses[keyof GamesBoxscoresReceivingCreateResponses];
+
+export type GamesBoxscoresReturnsListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/returns/';
+};
+
+export type GamesBoxscoresReturnsListResponses = {
+    200: Array<ReturnBoxscore>;
+};
+
+export type GamesBoxscoresReturnsListResponse = GamesBoxscoresReturnsListResponses[keyof GamesBoxscoresReturnsListResponses];
+
+export type GamesBoxscoresReturnsCreateData = {
+    body: ReturnBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/returns/';
+};
+
+export type GamesBoxscoresReturnsCreateResponses = {
+    201: ReturnBoxscoreWrite;
+};
+
+export type GamesBoxscoresReturnsCreateResponse = GamesBoxscoresReturnsCreateResponses[keyof GamesBoxscoresReturnsCreateResponses];
+
+export type GamesBoxscoresRushingListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/rushing/';
+};
+
+export type GamesBoxscoresRushingListResponses = {
+    200: Array<RushingBoxscore>;
+};
+
+export type GamesBoxscoresRushingListResponse = GamesBoxscoresRushingListResponses[keyof GamesBoxscoresRushingListResponses];
+
+export type GamesBoxscoresRushingCreateData = {
+    body: RushingBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/rushing/';
+};
+
+export type GamesBoxscoresRushingCreateResponses = {
+    201: RushingBoxscoreWrite;
+};
+
+export type GamesBoxscoresRushingCreateResponse = GamesBoxscoresRushingCreateResponses[keyof GamesBoxscoresRushingCreateResponses];
+
+export type GamesBoxscoresTacklesListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/boxscores/tackles/';
+};
+
+export type GamesBoxscoresTacklesListResponses = {
+    200: Array<TacklesBoxscore>;
+};
+
+export type GamesBoxscoresTacklesListResponse = GamesBoxscoresTacklesListResponses[keyof GamesBoxscoresTacklesListResponses];
+
+export type GamesBoxscoresTacklesCreateData = {
+    body: TacklesBoxscoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/boxscores/tackles/';
+};
+
+export type GamesBoxscoresTacklesCreateResponses = {
+    201: TacklesBoxscoreWrite;
+};
+
+export type GamesBoxscoresTacklesCreateResponse = GamesBoxscoresTacklesCreateResponses[keyof GamesBoxscoresTacklesCreateResponses];
+
+export type GamesDrivesListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/drives/';
+};
+
+export type GamesDrivesListResponses = {
+    200: Array<Drive>;
+};
+
+export type GamesDrivesListResponse = GamesDrivesListResponses[keyof GamesDrivesListResponses];
+
+export type GamesDrivesCreateData = {
+    body: DriveWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/drives/';
+};
+
+export type GamesDrivesCreateResponses = {
+    201: DriveWrite;
+};
+
+export type GamesDrivesCreateResponse = GamesDrivesCreateResponses[keyof GamesDrivesCreateResponses];
+
+export type GamesPlaysListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        is_scoring?: boolean;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        play_type?: string;
+        possession_team?: number;
+        quarter?: number;
+    };
+    url: '/api/v1/games/{game_pk}/plays/';
+};
+
+export type GamesPlaysListResponses = {
+    200: PaginatedPlayListList;
+};
+
+export type GamesPlaysListResponse = GamesPlaysListResponses[keyof GamesPlaysListResponses];
+
+export type GamesPlaysCreateData = {
+    body: PlayWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/plays/';
+};
+
+export type GamesPlaysCreateResponses = {
+    201: PlayWrite;
+};
+
+export type GamesPlaysCreateResponse = GamesPlaysCreateResponses[keyof GamesPlaysCreateResponses];
+
+export type GamesPlaysRetrieveData = {
+    body?: never;
+    path: {
+        game_pk: number;
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/plays/{id}/';
+};
+
+export type GamesPlaysRetrieveResponses = {
+    200: PlayDetail;
+};
+
+export type GamesPlaysRetrieveResponse = GamesPlaysRetrieveResponses[keyof GamesPlaysRetrieveResponses];
+
+export type GamesQuarterScoresListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/quarter-scores/';
+};
+
+export type GamesQuarterScoresListResponses = {
+    200: Array<QuarterScore>;
+};
+
+export type GamesQuarterScoresListResponse = GamesQuarterScoresListResponses[keyof GamesQuarterScoresListResponses];
+
+export type GamesQuarterScoresCreateData = {
+    body: QuarterScoreWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/quarter-scores/';
+};
+
+export type GamesQuarterScoresCreateResponses = {
+    201: QuarterScoreWrite;
+};
+
+export type GamesQuarterScoresCreateResponse = GamesQuarterScoresCreateResponses[keyof GamesQuarterScoresCreateResponses];
+
+export type GamesReplaysListData = {
+    body?: never;
+    path: {
+        game_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/games/{game_pk}/replays/';
+};
+
+export type GamesReplaysListResponses = {
+    200: Array<GameReplay>;
+};
+
+export type GamesReplaysListResponse = GamesReplaysListResponses[keyof GamesReplaysListResponses];
+
+export type GamesReplaysCreateData = {
+    body?: GameReplayWrite;
+    path: {
+        game_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{game_pk}/replays/';
+};
+
+export type GamesReplaysCreateResponses = {
+    201: GameReplayWrite;
+};
+
+export type GamesReplaysCreateResponse = GamesReplaysCreateResponses[keyof GamesReplaysCreateResponses];
+
+export type GamesRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this game.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{id}/';
+};
+
+export type GamesRetrieveResponses = {
+    200: GameDetail;
+};
+
+export type GamesRetrieveResponse = GamesRetrieveResponses[keyof GamesRetrieveResponses];
+
+export type GamesPartialUpdateData = {
+    body?: PatchedGameWrite;
+    path: {
+        /**
+         * A unique integer value identifying this game.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{id}/';
+};
+
+export type GamesPartialUpdateResponses = {
+    200: GameWrite;
+};
+
+export type GamesPartialUpdateResponse = GamesPartialUpdateResponses[keyof GamesPartialUpdateResponses];
+
+export type GamesUpdateData = {
+    body: GameWrite;
+    path: {
+        /**
+         * A unique integer value identifying this game.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{id}/';
+};
+
+export type GamesUpdateResponses = {
+    200: GameWrite;
+};
+
+export type GamesUpdateResponse = GamesUpdateResponses[keyof GamesUpdateResponses];
+
+export type GamesFullBoxscoreRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this game.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{id}/full-boxscore/';
+};
+
+export type GamesFullBoxscoreRetrieveResponses = {
+    200: FullBoxscore;
+};
+
+export type GamesFullBoxscoreRetrieveResponse = GamesFullBoxscoreRetrieveResponses[keyof GamesFullBoxscoreRetrieveResponses];
+
+export type GamesPlaybackRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this game.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{id}/playback/';
+};
+
+export type GamesPlaybackRetrieveResponses = {
+    200: PlaybackResponse;
+};
+
+export type GamesPlaybackRetrieveResponse = GamesPlaybackRetrieveResponses[keyof GamesPlaybackRetrieveResponses];
+
+export type GamesSummaryRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this game.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/games/{id}/summary/';
+};
+
+export type GamesSummaryRetrieveResponses = {
+    200: GameSummary;
+};
+
+export type GamesSummaryRetrieveResponse = GamesSummaryRetrieveResponses[keyof GamesSummaryRetrieveResponses];
+
+export type LeaguesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/leagues/';
+};
+
+export type LeaguesListResponses = {
+    200: PaginatedLeagueListList;
+};
+
+export type LeaguesListResponse = LeaguesListResponses[keyof LeaguesListResponses];
+
+export type LeaguesCreateData = {
+    body: LeagueWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/leagues/';
+};
+
+export type LeaguesCreateResponses = {
+    201: LeagueWrite;
+};
+
+export type LeaguesCreateResponse = LeaguesCreateResponses[keyof LeaguesCreateResponses];
+
+export type LeaguesRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this league.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/leagues/{id}/';
+};
+
+export type LeaguesRetrieveResponses = {
+    200: LeagueDetail;
+};
+
+export type LeaguesRetrieveResponse = LeaguesRetrieveResponses[keyof LeaguesRetrieveResponses];
+
+export type LeaguesPartialUpdateData = {
+    body?: PatchedLeagueWrite;
+    path: {
+        /**
+         * A unique integer value identifying this league.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/leagues/{id}/';
+};
+
+export type LeaguesPartialUpdateResponses = {
+    200: LeagueWrite;
+};
+
+export type LeaguesPartialUpdateResponse = LeaguesPartialUpdateResponses[keyof LeaguesPartialUpdateResponses];
+
+export type LeaguesUpdateData = {
+    body: LeagueWrite;
+    path: {
+        /**
+         * A unique integer value identifying this league.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/leagues/{id}/';
+};
+
+export type LeaguesUpdateResponses = {
+    200: LeagueWrite;
+};
+
+export type LeaguesUpdateResponse = LeaguesUpdateResponses[keyof LeaguesUpdateResponses];
+
+export type OrgUnitsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        league?: number;
+        /**
+         * * `CONFERENCE` - Conference
+         * * `DIVISION` - Division
+         * * `REGION` - Region
+         * * `CLASSIFICATION` - Classification
+         * * `LEAGUE_TIER` - League Tier
+         * * `OTHER` - Other
+         */
+        org_type?: 'CLASSIFICATION' | 'CONFERENCE' | 'DIVISION' | 'LEAGUE_TIER' | 'OTHER' | 'REGION';
+        parent?: number;
+    };
+    url: '/api/v1/org-units/';
+};
+
+export type OrgUnitsListResponses = {
+    200: PaginatedOrgUnitListList;
+};
+
+export type OrgUnitsListResponse = OrgUnitsListResponses[keyof OrgUnitsListResponses];
+
+export type OrgUnitsCreateData = {
+    body: OrgUnitWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/org-units/';
+};
+
+export type OrgUnitsCreateResponses = {
+    201: OrgUnitWrite;
+};
+
+export type OrgUnitsCreateResponse = OrgUnitsCreateResponses[keyof OrgUnitsCreateResponses];
+
+export type OrgUnitsRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this org unit.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/org-units/{id}/';
+};
+
+export type OrgUnitsRetrieveResponses = {
+    200: OrgUnitDetail;
+};
+
+export type OrgUnitsRetrieveResponse = OrgUnitsRetrieveResponses[keyof OrgUnitsRetrieveResponses];
+
+export type OrgUnitsPartialUpdateData = {
+    body?: PatchedOrgUnitWrite;
+    path: {
+        /**
+         * A unique integer value identifying this org unit.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/org-units/{id}/';
+};
+
+export type OrgUnitsPartialUpdateResponses = {
+    200: OrgUnitWrite;
+};
+
+export type OrgUnitsPartialUpdateResponse = OrgUnitsPartialUpdateResponses[keyof OrgUnitsPartialUpdateResponses];
+
+export type OrgUnitsUpdateData = {
+    body: OrgUnitWrite;
+    path: {
+        /**
+         * A unique integer value identifying this org unit.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/org-units/{id}/';
+};
+
+export type OrgUnitsUpdateResponses = {
+    200: OrgUnitWrite;
+};
+
+export type OrgUnitsUpdateResponse = OrgUnitsUpdateResponses[keyof OrgUnitsUpdateResponses];
+
+export type PlaysStatsListData = {
+    body?: never;
+    path: {
+        play_pk: number;
+    };
+    query?: {
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/plays/{play_pk}/stats/';
+};
+
+export type PlaysStatsListResponses = {
+    200: Array<PlayStat>;
+};
+
+export type PlaysStatsListResponse = PlaysStatsListResponses[keyof PlaysStatsListResponses];
+
+export type PlaysStatsCreateData = {
+    body: PlayStatWrite;
+    path: {
+        play_pk: number;
+    };
+    query?: never;
+    url: '/api/v1/plays/{play_pk}/stats/';
+};
+
+export type PlaysStatsCreateResponses = {
+    201: PlayStatWrite;
+};
+
+export type PlaysStatsCreateResponse = PlaysStatsCreateResponses[keyof PlaysStatsCreateResponses];
+
+export type SeasonsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        league?: number;
+        year?: number;
+    };
+    url: '/api/v1/seasons/';
+};
+
+export type SeasonsListResponses = {
+    200: PaginatedSeasonListList;
+};
+
+export type SeasonsListResponse = SeasonsListResponses[keyof SeasonsListResponses];
+
+export type SeasonsCreateData = {
+    body: SeasonWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/seasons/';
+};
+
+export type SeasonsCreateResponses = {
+    201: SeasonWrite;
+};
+
+export type SeasonsCreateResponse = SeasonsCreateResponses[keyof SeasonsCreateResponses];
+
+export type SeasonsRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this season.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/seasons/{id}/';
+};
+
+export type SeasonsRetrieveResponses = {
+    200: SeasonDetail;
+};
+
+export type SeasonsRetrieveResponse = SeasonsRetrieveResponses[keyof SeasonsRetrieveResponses];
+
+export type SeasonsPartialUpdateData = {
+    body?: PatchedSeasonWrite;
+    path: {
+        /**
+         * A unique integer value identifying this season.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/seasons/{id}/';
+};
+
+export type SeasonsPartialUpdateResponses = {
+    200: SeasonWrite;
+};
+
+export type SeasonsPartialUpdateResponse = SeasonsPartialUpdateResponses[keyof SeasonsPartialUpdateResponses];
+
+export type SeasonsUpdateData = {
+    body: SeasonWrite;
+    path: {
+        /**
+         * A unique integer value identifying this season.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/seasons/{id}/';
+};
+
+export type SeasonsUpdateResponses = {
+    200: SeasonWrite;
+};
+
+export type SeasonsUpdateResponse = SeasonsUpdateResponses[keyof SeasonsUpdateResponses];
+
+export type SourcesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/sources/';
+};
+
+export type SourcesListResponses = {
+    200: PaginatedSourceListList;
+};
+
+export type SourcesListResponse = SourcesListResponses[keyof SourcesListResponses];
+
+export type SourcesCreateData = {
+    body: SourceWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/sources/';
+};
+
+export type SourcesCreateResponses = {
+    201: SourceWrite;
+};
+
+export type SourcesCreateResponse = SourcesCreateResponses[keyof SourcesCreateResponses];
+
+export type SourcesDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this source.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/sources/{id}/';
+};
+
+export type SourcesDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type SourcesDestroyResponse = SourcesDestroyResponses[keyof SourcesDestroyResponses];
+
+export type SourcesRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this source.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/sources/{id}/';
+};
+
+export type SourcesRetrieveResponses = {
+    200: SourceDetail;
+};
+
+export type SourcesRetrieveResponse = SourcesRetrieveResponses[keyof SourcesRetrieveResponses];
+
+export type SourcesPartialUpdateData = {
+    body?: PatchedSourceWrite;
+    path: {
+        /**
+         * A unique integer value identifying this source.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/sources/{id}/';
+};
+
+export type SourcesPartialUpdateResponses = {
+    200: SourceWrite;
+};
+
+export type SourcesPartialUpdateResponse = SourcesPartialUpdateResponses[keyof SourcesPartialUpdateResponses];
+
+export type SourcesUpdateData = {
+    body: SourceWrite;
+    path: {
+        /**
+         * A unique integer value identifying this source.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/sources/{id}/';
+};
+
+export type SourcesUpdateResponses = {
+    200: SourceWrite;
+};
+
+export type SourcesUpdateResponse = SourcesUpdateResponses[keyof SourcesUpdateResponses];
+
+export type StandingsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        season_year?: number;
+        team?: number;
+        week?: number;
+    };
+    url: '/api/v1/standings/';
+};
+
+export type StandingsListResponses = {
+    200: PaginatedTeamStandingsSnapshotListList;
+};
+
+export type StandingsListResponse = StandingsListResponses[keyof StandingsListResponses];
+
+export type StandingsCreateData = {
+    body: TeamStandingsSnapshotWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/standings/';
+};
+
+export type StandingsCreateResponses = {
+    201: TeamStandingsSnapshotWrite;
+};
+
+export type StandingsCreateResponse = StandingsCreateResponses[keyof StandingsCreateResponses];
+
+export type StandingsRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this team standings snapshot.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/standings/{id}/';
+};
+
+export type StandingsRetrieveResponses = {
+    200: TeamStandingsSnapshotDetail;
+};
+
+export type StandingsRetrieveResponse = StandingsRetrieveResponses[keyof StandingsRetrieveResponses];
+
+export type TagsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/tags/';
+};
+
+export type TagsListResponses = {
+    200: PaginatedTagList;
+};
+
+export type TagsListResponse = TagsListResponses[keyof TagsListResponses];
+
+export type TagsCreateData = {
+    body: TagWritable;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tags/';
+};
+
+export type TagsCreateResponses = {
+    201: Tag;
+};
+
+export type TagsCreateResponse = TagsCreateResponses[keyof TagsCreateResponses];
+
+export type TagsDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this tag.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/tags/{id}/';
+};
+
+export type TagsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type TagsDestroyResponse = TagsDestroyResponses[keyof TagsDestroyResponses];
+
+export type TagsRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this tag.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/tags/{id}/';
+};
+
+export type TagsRetrieveResponses = {
+    200: Tag;
+};
+
+export type TagsRetrieveResponse = TagsRetrieveResponses[keyof TagsRetrieveResponses];
+
+export type TagsPartialUpdateData = {
+    body?: PatchedTagWritable;
+    path: {
+        /**
+         * A unique integer value identifying this tag.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/tags/{id}/';
+};
+
+export type TagsPartialUpdateResponses = {
+    200: Tag;
+};
+
+export type TagsPartialUpdateResponse = TagsPartialUpdateResponses[keyof TagsPartialUpdateResponses];
+
+export type TagsUpdateData = {
+    body: TagWritable;
+    path: {
+        /**
+         * A unique integer value identifying this tag.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/tags/{id}/';
+};
+
+export type TagsUpdateResponses = {
+    200: Tag;
+};
+
+export type TagsUpdateResponse = TagsUpdateResponses[keyof TagsUpdateResponses];
+
+export type TeamAffiliationsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        org_unit?: number;
+        season?: number;
+        team?: number;
+    };
+    url: '/api/v1/team-affiliations/';
+};
+
+export type TeamAffiliationsListResponses = {
+    200: PaginatedTeamAffiliationListList;
+};
+
+export type TeamAffiliationsListResponse = TeamAffiliationsListResponses[keyof TeamAffiliationsListResponses];
+
+export type TeamAffiliationsCreateData = {
+    body: TeamAffiliationWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/team-affiliations/';
+};
+
+export type TeamAffiliationsCreateResponses = {
+    201: TeamAffiliationWrite;
+};
+
+export type TeamAffiliationsCreateResponse = TeamAffiliationsCreateResponses[keyof TeamAffiliationsCreateResponses];
+
+export type TeamAffiliationsRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this team affiliation.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/team-affiliations/{id}/';
+};
+
+export type TeamAffiliationsRetrieveResponses = {
+    200: TeamAffiliationDetail;
+};
+
+export type TeamAffiliationsRetrieveResponse = TeamAffiliationsRetrieveResponses[keyof TeamAffiliationsRetrieveResponses];
+
+export type TeamAffiliationsPartialUpdateData = {
+    body?: PatchedTeamAffiliationWrite;
+    path: {
+        /**
+         * A unique integer value identifying this team affiliation.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/team-affiliations/{id}/';
+};
+
+export type TeamAffiliationsPartialUpdateResponses = {
+    200: TeamAffiliationWrite;
+};
+
+export type TeamAffiliationsPartialUpdateResponse = TeamAffiliationsPartialUpdateResponses[keyof TeamAffiliationsPartialUpdateResponses];
+
+export type TeamAffiliationsUpdateData = {
+    body: TeamAffiliationWrite;
+    path: {
+        /**
+         * A unique integer value identifying this team affiliation.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/team-affiliations/{id}/';
+};
+
+export type TeamAffiliationsUpdateResponses = {
+    200: TeamAffiliationWrite;
+};
+
+export type TeamAffiliationsUpdateResponse = TeamAffiliationsUpdateResponses[keyof TeamAffiliationsUpdateResponses];
+
+export type TeamVenueOccupanciesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        team?: number;
+        venue?: number;
+    };
+    url: '/api/v1/team-venue-occupancies/';
+};
+
+export type TeamVenueOccupanciesListResponses = {
+    200: PaginatedTeamVenueOccupancyListList;
+};
+
+export type TeamVenueOccupanciesListResponse = TeamVenueOccupanciesListResponses[keyof TeamVenueOccupanciesListResponses];
+
+export type TeamVenueOccupanciesCreateData = {
+    body: TeamVenueOccupancyWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/team-venue-occupancies/';
+};
+
+export type TeamVenueOccupanciesCreateResponses = {
+    201: TeamVenueOccupancyWrite;
+};
+
+export type TeamVenueOccupanciesCreateResponse = TeamVenueOccupanciesCreateResponses[keyof TeamVenueOccupanciesCreateResponses];
+
+export type TeamVenueOccupanciesRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this team venue occupancy.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/team-venue-occupancies/{id}/';
+};
+
+export type TeamVenueOccupanciesRetrieveResponses = {
+    200: TeamVenueOccupancyDetail;
+};
+
+export type TeamVenueOccupanciesRetrieveResponse = TeamVenueOccupanciesRetrieveResponses[keyof TeamVenueOccupanciesRetrieveResponses];
+
+export type TeamVenueOccupanciesPartialUpdateData = {
+    body?: PatchedTeamVenueOccupancyWrite;
+    path: {
+        /**
+         * A unique integer value identifying this team venue occupancy.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/team-venue-occupancies/{id}/';
+};
+
+export type TeamVenueOccupanciesPartialUpdateResponses = {
+    200: TeamVenueOccupancyWrite;
+};
+
+export type TeamVenueOccupanciesPartialUpdateResponse = TeamVenueOccupanciesPartialUpdateResponses[keyof TeamVenueOccupanciesPartialUpdateResponses];
+
+export type TeamVenueOccupanciesUpdateData = {
+    body: TeamVenueOccupancyWrite;
+    path: {
+        /**
+         * A unique integer value identifying this team venue occupancy.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/team-venue-occupancies/{id}/';
+};
+
+export type TeamVenueOccupanciesUpdateResponses = {
+    200: TeamVenueOccupancyWrite;
+};
+
+export type TeamVenueOccupanciesUpdateResponse = TeamVenueOccupanciesUpdateResponses[keyof TeamVenueOccupanciesUpdateResponses];
+
+export type TeamsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        city?: string;
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        franchise?: number;
+        /**
+         * A search term.
+         */
+        search?: string;
+        state?: string;
+    };
+    url: '/api/v1/teams/';
+};
+
+export type TeamsListResponses = {
+    200: PaginatedTeamListList;
+};
+
+export type TeamsListResponse = TeamsListResponses[keyof TeamsListResponses];
+
+export type TeamsCreateData = {
+    body: TeamWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/teams/';
+};
+
+export type TeamsCreateResponses = {
+    201: TeamWrite;
+};
+
+export type TeamsCreateResponse = TeamsCreateResponses[keyof TeamsCreateResponses];
+
+export type TeamsRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this team.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/teams/{id}/';
+};
+
+export type TeamsRetrieveResponses = {
+    200: TeamDetail;
+};
+
+export type TeamsRetrieveResponse = TeamsRetrieveResponses[keyof TeamsRetrieveResponses];
+
+export type TeamsPartialUpdateData = {
+    body?: PatchedTeamWrite;
+    path: {
+        /**
+         * A unique integer value identifying this team.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/teams/{id}/';
+};
+
+export type TeamsPartialUpdateResponses = {
+    200: TeamWrite;
+};
+
+export type TeamsPartialUpdateResponse = TeamsPartialUpdateResponses[keyof TeamsPartialUpdateResponses];
+
+export type TeamsUpdateData = {
+    body: TeamWrite;
+    path: {
+        /**
+         * A unique integer value identifying this team.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/teams/{id}/';
+};
+
+export type TeamsUpdateResponses = {
+    200: TeamWrite;
+};
+
+export type TeamsUpdateResponse = TeamsUpdateResponses[keyof TeamsUpdateResponses];
+
+export type TeamsCurrentVenueRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this team.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/teams/{id}/current-venue/';
+};
+
+export type TeamsCurrentVenueRetrieveResponses = {
+    200: VenueDetail;
+};
+
+export type TeamsCurrentVenueRetrieveResponse = TeamsCurrentVenueRetrieveResponses[keyof TeamsCurrentVenueRetrieveResponses];
+
+export type TeamsScheduleRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this team.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/teams/{id}/schedule/';
+};
+
+export type TeamsScheduleRetrieveResponses = {
+    200: GameList;
+};
+
+export type TeamsScheduleRetrieveResponse = TeamsScheduleRetrieveResponses[keyof TeamsScheduleRetrieveResponses];
+
+export type VenuesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        city?: string;
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+        state?: string;
+    };
+    url: '/api/v1/venues/';
+};
+
+export type VenuesListResponses = {
+    200: PaginatedVenueListList;
+};
+
+export type VenuesListResponse = VenuesListResponses[keyof VenuesListResponses];
+
+export type VenuesCreateData = {
+    body: VenueWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/venues/';
+};
+
+export type VenuesCreateResponses = {
+    201: VenueWrite;
+};
+
+export type VenuesCreateResponse = VenuesCreateResponses[keyof VenuesCreateResponses];
+
+export type VenuesRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this venue.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/venues/{id}/';
+};
+
+export type VenuesRetrieveResponses = {
+    200: VenueDetail;
+};
+
+export type VenuesRetrieveResponse = VenuesRetrieveResponses[keyof VenuesRetrieveResponses];
+
+export type VenuesPartialUpdateData = {
+    body?: PatchedVenueWrite;
+    path: {
+        /**
+         * A unique integer value identifying this venue.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/venues/{id}/';
+};
+
+export type VenuesPartialUpdateResponses = {
+    200: VenueWrite;
+};
+
+export type VenuesPartialUpdateResponse = VenuesPartialUpdateResponses[keyof VenuesPartialUpdateResponses];
+
+export type VenuesUpdateData = {
+    body: VenueWrite;
+    path: {
+        /**
+         * A unique integer value identifying this venue.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/venues/{id}/';
+};
+
+export type VenuesUpdateResponses = {
+    200: VenueWrite;
+};
+
+export type VenuesUpdateResponse = VenuesUpdateResponses[keyof VenuesUpdateResponses];
+
+export type VideoAssetsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * * `FULL` - Full Broadcast
+         * * `CONDENSED` - Condensed
+         * * `COACHES` - Coaches Film
+         * * `ALL22` - All-22
+         * * `HIGHLIGHTS` - Highlights
+         * * `RADIO` - Radio Audio
+         * * `OTHER` - Other
+         */
+        asset_type?: 'ALL22' | 'COACHES' | 'CONDENSED' | 'FULL' | 'HIGHLIGHTS' | 'OTHER' | 'RADIO';
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+        game?: number;
+        is_preferred?: boolean;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * * `A` - Tier A (Best Available)
+         * * `B` - Tier B (Very Good)
+         * * `C` - Tier C (Good)
+         * * `D` - Tier D (Filler)
+         */
+        quality_tier?: 'A' | 'B' | 'C' | 'D';
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/v1/video-assets/';
+};
+
+export type VideoAssetsListResponses = {
+    200: PaginatedVideoAssetListList;
+};
+
+export type VideoAssetsListResponse = VideoAssetsListResponses[keyof VideoAssetsListResponses];
+
+export type VideoAssetsCreateData = {
+    body: VideoAssetWrite;
+    path?: never;
+    query?: never;
+    url: '/api/v1/video-assets/';
+};
+
+export type VideoAssetsCreateResponses = {
+    201: VideoAssetWrite;
+};
+
+export type VideoAssetsCreateResponse = VideoAssetsCreateResponses[keyof VideoAssetsCreateResponses];
+
+export type VideoAssetsDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this video asset.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/video-assets/{id}/';
+};
+
+export type VideoAssetsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type VideoAssetsDestroyResponse = VideoAssetsDestroyResponses[keyof VideoAssetsDestroyResponses];
+
+export type VideoAssetsRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this video asset.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/video-assets/{id}/';
+};
+
+export type VideoAssetsRetrieveResponses = {
+    200: VideoAssetDetail;
+};
+
+export type VideoAssetsRetrieveResponse = VideoAssetsRetrieveResponses[keyof VideoAssetsRetrieveResponses];
+
+export type VideoAssetsPartialUpdateData = {
+    body?: PatchedVideoAssetWrite;
+    path: {
+        /**
+         * A unique integer value identifying this video asset.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/video-assets/{id}/';
+};
+
+export type VideoAssetsPartialUpdateResponses = {
+    200: VideoAssetWrite;
+};
+
+export type VideoAssetsPartialUpdateResponse = VideoAssetsPartialUpdateResponses[keyof VideoAssetsPartialUpdateResponses];
+
+export type VideoAssetsUpdateData = {
+    body: VideoAssetWrite;
+    path: {
+        /**
+         * A unique integer value identifying this video asset.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/video-assets/{id}/';
+};
+
+export type VideoAssetsUpdateResponses = {
+    200: VideoAssetWrite;
+};
+
+export type VideoAssetsUpdateResponse = VideoAssetsUpdateResponses[keyof VideoAssetsUpdateResponses];
+
+export type VideoAssetsPreferredRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/video-assets/preferred/';
+};
+
+export type VideoAssetsPreferredRetrieveResponses = {
+    200: VideoAssetList;
+};
+
+export type VideoAssetsPreferredRetrieveResponse = VideoAssetsPreferredRetrieveResponses[keyof VideoAssetsPreferredRetrieveResponses];
