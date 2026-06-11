@@ -1,3 +1,4 @@
+import { EmptyState, InlineError, TableSkeleton } from "@/components/states";
 import {
 	GameFilters,
 	type LeagueOption,
@@ -6,11 +7,9 @@ import {
 import { GameTable } from "@/features/games/components/GameTable";
 import { useGamesList } from "@/features/games/hooks";
 import { GAME_STATUSES, type GameStatus } from "@/features/games/types";
-import { EmptyState } from "@/features/teams/components/EmptyState";
 import { useTeamsList } from "@/features/teams/hooks";
 import { LEAGUES, type League } from "@/features/teams/types";
-import { Alert, Pagination, Skeleton, Stack, Text, Title } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { Pagination, Stack, Text, Title } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 
@@ -193,11 +192,13 @@ function GamesIndex() {
 			/>
 
 			{isError ? (
-				<Alert color="red" icon={<IconAlertCircle size={16} />} title="Couldn't load games">
-					{(gamesQuery.error as Error).message}
-				</Alert>
+				<InlineError
+					title="Couldn't load games"
+					message={(gamesQuery.error as Error).message}
+					onRetry={() => gamesQuery.refetch()}
+				/>
 			) : isLoading ? (
-				<Skeleton height={500} radius="sm" data-testid="game-table-skeleton" />
+				<TableSkeleton rows={10} data-testid="game-table-skeleton" />
 			) : results.length === 0 ? (
 				<EmptyState
 					title="No games match your filters"

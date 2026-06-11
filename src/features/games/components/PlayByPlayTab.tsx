@@ -1,5 +1,5 @@
-import { Alert, Badge, Skeleton, Stack, Text } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { EmptyState } from "@/components/states";
+import { Badge, Skeleton, Stack, Text } from "@mantine/core";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useMemo, useRef } from "react";
 import { useGamePlayByPlay } from "../hooks";
@@ -103,9 +103,10 @@ export function PlayByPlayTab({ gameId, active }: { gameId: string; active: bool
 	}
 	if (query.isError) {
 		return (
-			<Alert color="yellow" icon={<IconAlertCircle size={16} />} title="No play-by-play available">
-				This game hasn't started, or play-by-play isn't ready yet.
-			</Alert>
+			<EmptyState
+				title="No play-by-play available"
+				description="This game hasn't started, or play-by-play isn't ready yet."
+			/>
 		);
 	}
 	if (!query.data || rows.length === 0) return null;

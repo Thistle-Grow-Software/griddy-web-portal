@@ -1,11 +1,10 @@
+import { EmptyState, InlineError } from "@/components/states";
 import { BioTab } from "@/features/players/components/BioTab";
 import { CareerStatsTab } from "@/features/players/components/CareerStatsTab";
 import { GameLogTab } from "@/features/players/components/GameLogTab";
 import { PlayerHero, PlayerHeroSkeleton } from "@/features/players/components/PlayerHero";
 import { usePlayerDetail } from "@/features/players/hooks";
-import { EmptyState } from "@/features/teams/components/EmptyState";
-import { Alert, Button, Stack, Tabs } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { Button, Stack, Tabs } from "@mantine/core";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 const TABS = ["career", "gameLog", "bio"] as const;
@@ -59,9 +58,11 @@ function PlayerDetail() {
 			);
 		}
 		return (
-			<Alert color="red" icon={<IconAlertCircle size={16} />} title="Couldn't load player">
-				{(detailQuery.error as Error).message}
-			</Alert>
+			<InlineError
+				title="Couldn't load player"
+				message={(detailQuery.error as Error).message}
+				onRetry={() => detailQuery.refetch()}
+			/>
 		);
 	}
 

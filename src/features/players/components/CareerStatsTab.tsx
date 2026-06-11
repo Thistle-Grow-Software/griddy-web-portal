@@ -1,5 +1,5 @@
-import { EmptyState } from "@/features/teams/components/EmptyState";
-import { Center, Loader, Stack, Table, Text } from "@mantine/core";
+import { EmptyState, InlineError, PageSkeleton } from "@/components/states";
+import { Stack, Table, Text } from "@mantine/core";
 import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { usePlayerCareer } from "../hooks";
@@ -59,14 +59,10 @@ export function CareerStatsTab({
 	);
 
 	if (isLoading) {
-		return (
-			<Center mih={120}>
-				<Loader size="sm" />
-			</Center>
-		);
+		return <PageSkeleton data-testid="career-stats-skeleton" />;
 	}
 	if (isError) {
-		return <EmptyState title="Couldn't load career stats" description={(error as Error).message} />;
+		return <InlineError title="Couldn't load career stats" message={(error as Error).message} />;
 	}
 	if (!data || data.length === 0) {
 		return <EmptyState title="No career data on file" />;

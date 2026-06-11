@@ -1,6 +1,6 @@
-import { Card, Center, Loader, SimpleGrid, Stack, Text } from "@mantine/core";
+import { CardSkeleton, EmptyState, InlineError } from "@/components/states";
+import { Card, SimpleGrid, Stack, Text } from "@mantine/core";
 import { useTeamStats } from "../hooks";
-import { EmptyState } from "./EmptyState";
 
 const STAT_LABELS: Record<string, string> = {
 	gamesPlayed: "Games Played",
@@ -17,13 +17,15 @@ export function StatsTab({ teamId, active }: { teamId: string; active: boolean }
 
 	if (isLoading) {
 		return (
-			<Center mih={120}>
-				<Loader size="sm" />
-			</Center>
+			<SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="md" data-testid="stats-skeleton">
+				{["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8"].map((key) => (
+					<CardSkeleton key={key} />
+				))}
+			</SimpleGrid>
 		);
 	}
 	if (isError) {
-		return <EmptyState title="Couldn't load stats" description={(error as Error).message} />;
+		return <InlineError title="Couldn't load stats" message={(error as Error).message} />;
 	}
 	if (!data) {
 		return <EmptyState title="No stats available" />;

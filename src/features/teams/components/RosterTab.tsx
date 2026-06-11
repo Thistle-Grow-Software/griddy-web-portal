@@ -1,10 +1,10 @@
-import { Center, Loader, Skeleton, Table, UnstyledButton } from "@mantine/core";
+import { EmptyState, InlineError, TableSkeleton } from "@/components/states";
+import { Skeleton, Table, UnstyledButton } from "@mantine/core";
 import { IconArrowDown, IconArrowUp, IconArrowsSort } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useTeamRoster } from "../hooks";
 import type { RosterPlayer } from "../types";
-import { EmptyState } from "./EmptyState";
 
 type SortKey = "jersey" | "name" | "position";
 type SortDir = "asc" | "desc";
@@ -51,14 +51,10 @@ export function RosterTab({ teamId, active }: { teamId: string; active: boolean 
 	}
 
 	if (isLoading) {
-		return (
-			<Center mih={120}>
-				<Loader size="sm" />
-			</Center>
-		);
+		return <TableSkeleton rows={8} data-testid="roster-skeleton" />;
 	}
 	if (isError) {
-		return <EmptyState title="Couldn't load roster" description={(error as Error).message} />;
+		return <InlineError title="Couldn't load roster" message={(error as Error).message} />;
 	}
 	if (!data || data.length === 0) {
 		return <EmptyState title="No roster information available" />;

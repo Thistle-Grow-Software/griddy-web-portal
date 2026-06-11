@@ -1,12 +1,10 @@
-import { EmptyState } from "@/features/teams/components/EmptyState";
+import { CardSkeleton, EmptyState, InlineError } from "@/components/states";
 import { TeamCard } from "@/features/teams/components/TeamCard";
-import { TeamCardSkeleton } from "@/features/teams/components/TeamCardSkeleton";
 import { type LeagueOption, TeamFilters } from "@/features/teams/components/TeamFilters";
 import { useTeamsList } from "@/features/teams/hooks";
 import { LEAGUES, type League, type Season } from "@/features/teams/types";
-import { Alert, Pagination, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Pagination, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconAlertCircle } from "@tabler/icons-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -118,13 +116,15 @@ function TeamsIndex() {
 			/>
 
 			{isError ? (
-				<Alert color="red" icon={<IconAlertCircle size={16} />} title="Couldn't load teams">
-					{(teamsQuery.error as Error).message}
-				</Alert>
+				<InlineError
+					title="Couldn't load teams"
+					message={(teamsQuery.error as Error).message}
+					onRetry={() => teamsQuery.refetch()}
+				/>
 			) : isInitialLoading ? (
 				<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
 					{["s1", "s2", "s3", "s4", "s5", "s6"].map((key) => (
-						<TeamCardSkeleton key={key} />
+						<CardSkeleton key={key} />
 					))}
 				</SimpleGrid>
 			) : results.length === 0 ? (

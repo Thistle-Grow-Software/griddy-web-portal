@@ -247,6 +247,47 @@ test.describe("screenshots", () => {
 		});
 	});
 
+	test("captures shared loading/empty/error state primitives (TGF-336)", async ({ page }) => {
+		// Reference section on /theme-preview shows every variant.
+		await page.goto("/theme-preview");
+		const statesSection = page.locator('section[aria-labelledby="states-heading"]');
+		await expect(statesSection).toBeVisible({ timeout: 15_000 });
+		await statesSection.scrollIntoViewIfNeeded();
+		await statesSection.screenshot({
+			path: "docs/screenshots/states/theme-preview-states.png",
+		});
+
+		// Toast conventions — fire all three and capture them stacked.
+		await page.getByRole("button", { name: "notify.success" }).click();
+		await page.getByRole("button", { name: "notify.error" }).click();
+		await page.getByRole("button", { name: "notify.info" }).click();
+		await expect(page.getByText(/stays until you dismiss it/i)).toBeVisible();
+		await page.screenshot({
+			path: "docs/screenshots/states/notifications.png",
+			fullPage: false,
+		});
+
+		// ErrorBoundary: throw the deliberate test error, capture the fallback,
+		// then confirm "Try again" recovers.
+		await page.getByRole("button", { name: "Throw test error" }).click();
+		await expect(page.getByText("Something went wrong")).toBeVisible();
+		await statesSection.screenshot({
+			path: "docs/screenshots/states/error-boundary-fallback.png",
+		});
+		// The InlineError demo above also has a "Try again" button; the boundary
+		// fallback's is the later one in DOM order.
+		await page.getByRole("button", { name: "Try again" }).last().click();
+		await expect(page.getByRole("button", { name: "Throw test error" })).toBeVisible();
+
+		// Router-level 404 via the shared NotFound surface.
+		await page.goto("/this-page-does-not-exist");
+		await expect(page.getByRole("heading", { name: "404" })).toBeVisible({ timeout: 15_000 });
+		await page.screenshot({
+			path: "docs/screenshots/states/not-found-404.png",
+			fullPage: true,
+		});
+	});
+
 	test("captures /stats query builder states", async ({ page }) => {
 		// Default — Plays entity, no filters, default columns and sort.
 		await page.goto("/stats");

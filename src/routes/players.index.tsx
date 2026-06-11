@@ -1,3 +1,4 @@
+import { EmptyState, InlineError, TableSkeleton } from "@/components/states";
 import {
 	type LeagueOption,
 	PlayerFilters,
@@ -6,12 +7,10 @@ import {
 import { VirtualPlayerTable } from "@/features/players/components/VirtualPlayerTable";
 import { usePlayersList } from "@/features/players/hooks";
 import { POSITIONS, type Position } from "@/features/players/types";
-import { EmptyState } from "@/features/teams/components/EmptyState";
 import { useTeamsList } from "@/features/teams/hooks";
 import { LEAGUES, type League } from "@/features/teams/types";
-import { Alert, Pagination, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Pagination, Stack, Text, Title } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconAlertCircle } from "@tabler/icons-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
@@ -182,11 +181,13 @@ function PlayersIndex() {
 			/>
 
 			{isError ? (
-				<Alert color="red" icon={<IconAlertCircle size={16} />} title="Couldn't load players">
-					{(playersQuery.error as Error).message}
-				</Alert>
+				<InlineError
+					title="Couldn't load players"
+					message={(playersQuery.error as Error).message}
+					onRetry={() => playersQuery.refetch()}
+				/>
 			) : isLoading ? (
-				<Skeleton height={600} radius="sm" data-testid="player-table-skeleton" />
+				<TableSkeleton rows={12} data-testid="player-table-skeleton" />
 			) : results.length === 0 ? (
 				<EmptyState
 					title="No players match your filters"

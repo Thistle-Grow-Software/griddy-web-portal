@@ -1,5 +1,15 @@
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
+	CardSkeleton,
+	EmptyState,
+	ErrorBoundary,
+	InlineError,
+	NotFound,
+	PageSkeleton,
+	TableSkeleton,
+	notify,
+} from "@/components/states";
+import {
 	Alert,
 	Anchor,
 	Badge,
@@ -28,11 +38,27 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { modals } from "@mantine/modals";
-import { notifications } from "@mantine/notifications";
+import { useState } from "react";
 
 const BUTTON_VARIANTS = ["filled", "light", "outline", "subtle", "default", "gradient"] as const;
 
 const SHADE_INDICES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
+
+/**
+ * Throws on demand so the wrapping ErrorBoundary can demonstrate the catch →
+ * Sentry report → fallback flow. "Try again" remounts this with fresh state.
+ */
+function BrokenWidget() {
+	const [broken, setBroken] = useState(false);
+	if (broken) {
+		throw new Error("Deliberate test error from /theme-preview");
+	}
+	return (
+		<Button color="red" variant="outline" onClick={() => setBroken(true)}>
+			Throw test error
+		</Button>
+	);
+}
 
 export function ThemePreviewPage() {
 	const theme = useMantineTheme();
@@ -211,6 +237,68 @@ export function ThemePreviewPage() {
 
 				<Divider />
 
+				<section aria-labelledby="states-heading">
+					<Stack gap="sm">
+						<Title id="states-heading" order={2}>
+							Loading, empty &amp; error states
+						</Title>
+						<Text c="dimmed" size="sm">
+							Shared primitives from <code>src/components/states/</code> (TGF-336). See the README
+							there for usage conventions.
+						</Text>
+
+						<Title order={3}>Loading</Title>
+						<Text size="sm" fw={500}>
+							PageSkeleton
+						</Text>
+						<PageSkeleton />
+						<Text size="sm" fw={500}>
+							TableSkeleton (rows=3)
+						</Text>
+						<TableSkeleton rows={3} />
+						<Text size="sm" fw={500}>
+							CardSkeleton
+						</Text>
+						<SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
+							<CardSkeleton />
+							<CardSkeleton data-testid="card-skeleton-2" />
+							<CardSkeleton data-testid="card-skeleton-3" />
+						</SimpleGrid>
+
+						<Title order={3}>Empty</Title>
+						<EmptyState
+							title="No results match your filters"
+							description="Try clearing the search or switching leagues."
+							action={{ label: "Clear filters", onClick: () => notify.info("Filters cleared.") }}
+						/>
+						<EmptyState title="No data available yet" />
+						<EmptyState
+							title="Team not found"
+							description={'No team matches ID "example".'}
+							action={{ label: "Back to teams", onClick: () => notify.info("Navigating back.") }}
+						/>
+
+						<Title order={3}>Errors</Title>
+						<InlineError
+							title="Couldn't load widget"
+							message="The rest of the page still works — this failure is contained."
+							onRetry={() => notify.success("Retried.")}
+						/>
+						<Text size="sm" fw={500}>
+							ErrorBoundary (throws a deliberate test error, reported to Sentry)
+						</Text>
+						<ErrorBoundary>
+							<BrokenWidget />
+						</ErrorBoundary>
+						<Text size="sm" fw={500}>
+							NotFound
+						</Text>
+						<NotFound />
+					</Stack>
+				</section>
+
+				<Divider />
+
 				<section aria-labelledby="feedback-heading">
 					<Stack gap="sm">
 						<Title id="feedback-heading" order={2}>
@@ -218,14 +306,26 @@ export function ThemePreviewPage() {
 						</Title>
 						<Group>
 							<Button
+								color="green"
+								onClick={() => notify.success("Saved. This dismisses itself in 3 seconds.")}
+							>
+								notify.success
+							</Button>
+							<Button
+								color="red"
 								onClick={() =>
-									notifications.show({
-										title: "Hello",
-										message: "This is a Mantine notification.",
+									notify.error("Something failed. This stays until you dismiss it.", {
+										title: "Error",
 									})
 								}
 							>
-								Show notification
+								notify.error
+							</Button>
+							<Button
+								color="blue"
+								onClick={() => notify.info("Heads up. This dismisses itself in 5 seconds.")}
+							>
+								notify.info
 							</Button>
 							<Button
 								variant="light"
