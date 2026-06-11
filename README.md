@@ -165,6 +165,30 @@ griddy-web-portal/
 
 Feature stories under TGF-321 will introduce additional directories (`src/api/`, `src/routes/`, `src/components/`, etc.) as needed. Pre-creating empty directories is left out deliberately — git doesn't track them anyway, and conventions are easier to enforce when they appear with real code.
 
+## Architecture
+
+### API query layer (`src/api/queries/`)
+
+Feature code never calls the generated OpenAPI client directly. Each API resource gets one
+module under `src/api/queries/` (e.g. `teams.ts`) exporting typed TanStack Query hooks plus a
+query-key factory following the `["<resource>", "list", filters]` / `["<resource>", "detail", id]`
+convention, so cache invalidation stays predictable. Response types are inferred from the
+generated client (`src/api/generated/`) — no hand-written response shapes, no `any` casts —
+and mutation hooks invalidate the affected list/detail keys on success. New hooks land
+per-resource as backend endpoints stabilize (TGF-348).
+
+```tsx
+import { useTeamsList, useTeamUpdate } from "@/api/queries";
+
+function TeamsPage() {
+	// data is PaginatedTeamListList, inferred end-to-end from the DRF schema.
+	const { data, isPending } = useTeamsList({ search: "chiefs" });
+	// On success this invalidates ["teams", "list"] and ["teams", "detail", id].
+	const updateTeam = useTeamUpdate();
+	// ...
+}
+```
+
 ## Stack reference
 
 | Concern | Choice |
